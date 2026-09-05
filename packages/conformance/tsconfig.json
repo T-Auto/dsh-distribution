@@ -1,0 +1,30 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "rootDir": "src",
+    "outDir": "lib"
+  },
+  "include": [
+    "src/**/*.ts"
+  ],
+  "references": [
+    {
+      "path": "../core"
+    },
+    {
+      "path": "../composition"
+    },
+    {
+      "path": "../layout"
+    },
+    {
+      "path": "../discovery"
+    },
+    {
+      "path": "../lifecycle"
+    },
+    {
+      "path": "../portability"
+    }
+  ]
+}

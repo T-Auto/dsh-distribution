@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/T-Auto/dsh-distribution/schema/portability/portability/v1alpha1",
+  "title": "portability/portability",
+  "type": "object",
+  "properties": {
+    "modes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "clone",
+          "export",
+          "migrate"
+        ]
+      }
+    }
+  },
+  "required": [
+    "modes"
+  ],
+  "additionalProperties": false
+}

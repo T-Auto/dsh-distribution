@@ -1,0 +1,18 @@
+{
+  "formatVersion": 1,
+  "status": "Draft",
+  "protocols": [
+    { "apiVersion": "distribution.dsh.dev/v1alpha1", "kind": "DistributionDescriptor", "package": "@dsh-distribution/core", "proposal": "docs/proposals/core.md", "schema": "packages/core/schema/descriptor.schema.json" },
+    { "apiVersion": "composition.distribution.dsh.dev/v1alpha1", "kind": "EnvironmentComposition", "package": "@dsh-distribution/composition", "proposal": "docs/proposals/composition.md", "schema": "packages/composition/schema/composition.schema.json" },
+    { "apiVersion": "layout.distribution.dsh.dev/v1alpha1", "kind": "ManagedLayout", "package": "@dsh-distribution/layout", "proposal": "docs/proposals/layout.md", "schema": "packages/layout/schema/layout.schema.json" },
+    { "apiVersion": "discovery.distribution.dsh.dev/v1alpha1", "kind": "EnvironmentDiscovery", "package": "@dsh-distribution/discovery", "proposal": "docs/proposals/discovery.md", "schema": "packages/discovery/schema/discovery.schema.json" },
+    { "apiVersion": "lifecycle.distribution.dsh.dev/v1alpha1", "kind": "EnvironmentLifecycle", "package": "@dsh-distribution/lifecycle", "proposal": "docs/proposals/lifecycle.md", "schema": "packages/lifecycle/schema/lifecycle.schema.json" },
+    { "apiVersion": "portability.distribution.dsh.dev/v1alpha1", "kind": "EnvironmentPortability", "package": "@dsh-distribution/portability", "proposal": "docs/proposals/portability.md", "schema": "packages/portability/schema/portability.schema.json" }
+  ],
+  "records": [
+    { "apiVersion": "distribution.dsh.dev/v1alpha1", "kind": "EnvironmentInstance", "schema": "packages/discovery/schema/instance.schema.json" },
+    { "apiVersion": "lifecycle.distribution.dsh.dev/v1alpha1", "kind": "EnvironmentObservation", "schema": "packages/lifecycle/schema/observation.schema.json" },
+    { "apiVersion": "portability.distribution.dsh.dev/v1alpha1", "kind": "MigrationPlan", "schema": "packages/portability/schema/plan.schema.json" },
+    { "apiVersion": "portability.distribution.dsh.dev/v1alpha1", "kind": "MigrationJournal", "schema": "packages/portability/schema/journal.schema.json" }
+  ]
+}

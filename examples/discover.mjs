@@ -1,0 +1,11 @@
+import { readFile } from 'node:fs/promises';
+import { bindInstance, MemoryDiscoveryProvider, discover } from '../packages/discovery/lib/index.js';
+import { checkDescriptor } from '../packages/conformance/lib/index.js';
+const descriptor = JSON.parse(await readFile(new URL('./managed.json', import.meta.url), 'utf8'));
+const reference = 'urn:example:descriptor:workbench-1';
+const instance = bindInstance(descriptor, 'urn:uuid:00000000-0000-4000-8000-000000000001', reference);
+if (!instance.ok) throw new Error(JSON.stringify(instance));
+const provider = new MemoryDiscoveryProvider([{ reference, descriptor, instance: instance.value }]);
+const result = await discover(reference, provider);
+if (!result.ok || !checkDescriptor(result.value.descriptor).complete) throw new Error('Discovery example failed');
+console.log('Discovery: descriptor and separately identified instance resolved without network or activation.');

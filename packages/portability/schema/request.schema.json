@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/T-Auto/dsh-distribution/schema/portability/request/v1alpha1",
+  "title": "portability/request",
+  "type": "object",
+  "properties": {
+    "planId": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z][A-Za-z0-9+.-]*:[^\\s\\u0000-\\u001f\\u007f]+$(?![\\s\\S])"
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "clone",
+        "export",
+        "migrate"
+      ]
+    },
+    "sourceInstanceId": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z][A-Za-z0-9+.-]*:[^\\s\\u0000-\\u001f\\u007f]+$(?![\\s\\S])"
+    },
+    "targetInstanceId": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z][A-Za-z0-9+.-]*:[^\\s\\u0000-\\u001f\\u007f]+$(?![\\s\\S])"
+    },
+    "sourceRevision": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 9007199254740991
+    },
+    "approvedConditionalResources": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]*$(?![\\s\\S])"
+      }
+    },
+    "rollback": {
+      "type": "object",
+      "properties": {
+        "strategy": {
+          "type": "string",
+          "enum": [
+            "restore-checkpoint",
+            "discard-new-target"
+          ]
+        },
+        "reference": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[A-Za-z][A-Za-z0-9+.-]*:[^\\s\\u0000-\\u001f\\u007f]+$(?![\\s\\S])"
+        }
+      },
+      "required": [
+        "strategy",
+        "reference"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "planId",
+    "mode",
+    "sourceInstanceId",
+    "targetInstanceId",
+    "sourceRevision",
+    "approvedConditionalResources",
+    "rollback"
+  ],
+  "additionalProperties": false
+}

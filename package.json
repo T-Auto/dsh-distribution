@@ -1,0 +1,28 @@
+{
+  "name": "dsh-distribution-workspace",
+  "private": true,
+  "license": "MIT",
+  "packageManager": "pnpm@11.21.0",
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc -b",
+    "schemas:write": "pnpm build && node scripts/schemas.mjs --write",
+    "schemas:check": "node scripts/schemas.mjs",
+    "test": "pnpm build && node --test tests/*.test.mjs",
+    "examples": "node examples/discover.mjs && node examples/migrate.mjs",
+    "check:docs": "node scripts/check-docs.mjs",
+    "check:pack": "pnpm build && node scripts/pack-smoke.mjs",
+    "check": "pnpm test && pnpm schemas:check && pnpm check:docs && pnpm examples",
+    "changeset": "changeset",
+    "version-packages": "changeset version"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^3.0.1",
+    "@types/node": "^22.20.1",
+    "ajv": "^8.20.0",
+    "typescript": "5.9.3"
+  }
+}

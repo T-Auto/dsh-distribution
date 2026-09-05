@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/T-Auto/dsh-distribution/schema/layout/layout/v1alpha1",
+  "title": "layout/layout",
+  "type": "object",
+  "properties": {
+    "resources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._:@/-]*$(?![\\s\\S])"
+          },
+          "role": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^(?:config|extensions|state|data|cache|logs|secrets|[a-z][a-z0-9.-]*:[A-Za-z0-9._-]+)$(?![\\s\\S])"
+          },
+          "location": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "relative-path",
+                  "uri"
+                ]
+              },
+              "value": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "type",
+              "value"
+            ],
+            "additionalProperties": false
+          },
+          "ownership": {
+            "type": "string",
+            "enum": [
+              "exclusive",
+              "shared",
+              "external"
+            ]
+          },
+          "portability": {
+            "type": "string",
+            "enum": [
+              "portable",
+              "conditional",
+              "nonportable",
+              "external"
+            ]
+          },
+          "sensitivity": {
+            "type": "string",
+            "enum": [
+              "public",
+              "private",
+              "secret"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "role",
+          "location",
+          "ownership",
+          "portability",
+          "sensitivity"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "resources"
+  ],
+  "additionalProperties": false
+}

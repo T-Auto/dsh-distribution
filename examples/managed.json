@@ -1,0 +1,48 @@
+{
+  "apiVersion": "distribution.dsh.dev/v1alpha1",
+  "kind": "DistributionDescriptor",
+  "distribution": { "id": "urn:example:distribution:workbench", "version": "1.0.0" },
+  "displayName": "Example workbench (no required runtime)",
+  "protocols": [
+    {
+      "apiVersion": "composition.distribution.dsh.dev/v1alpha1",
+      "kind": "EnvironmentComposition",
+      "required": false,
+      "spec": { "components": [
+        { "id": "runtime", "ref": "pkg:npm/example-runtime@1.0.0" },
+        { "id": "interface", "ref": "https://example.invalid/components/interface/1.0.0", "dependsOn": ["runtime"], "contracts": [{ "apiVersion": "connection.dsh/v1alpha1", "kind": "EndpointConnection" }] }
+      ] }
+    },
+    {
+      "apiVersion": "layout.distribution.dsh.dev/v1alpha1",
+      "kind": "ManagedLayout",
+      "required": true,
+      "spec": { "resources": [
+        { "id": "config", "role": "config", "location": { "type": "relative-path", "value": "./settings" }, "ownership": "exclusive", "portability": "portable", "sensitivity": "private" },
+        { "id": "extensions", "role": "extensions", "location": { "type": "relative-path", "value": "./vendor/extensions" }, "ownership": "exclusive", "portability": "portable", "sensitivity": "public" },
+        { "id": "state", "role": "state", "location": { "type": "relative-path", "value": "./sessions" }, "ownership": "exclusive", "portability": "conditional", "sensitivity": "private" },
+        { "id": "data", "role": "data", "location": { "type": "uri", "value": "s3://example-bucket/user-data" }, "ownership": "external", "portability": "external", "sensitivity": "private" },
+        { "id": "cache", "role": "cache", "location": { "type": "relative-path", "value": "./cache" }, "ownership": "exclusive", "portability": "nonportable", "sensitivity": "private" },
+        { "id": "credentials", "role": "secrets", "location": { "type": "uri", "value": "vault://example/environment" }, "ownership": "external", "portability": "external", "sensitivity": "secret" }
+      ] }
+    },
+    {
+      "apiVersion": "discovery.distribution.dsh.dev/v1alpha1",
+      "kind": "EnvironmentDiscovery",
+      "required": false,
+      "spec": { "references": ["urn:example:descriptor:workbench-1"] }
+    },
+    {
+      "apiVersion": "lifecycle.distribution.dsh.dev/v1alpha1",
+      "kind": "EnvironmentLifecycle",
+      "required": false,
+      "spec": { "states": ["available", "active", "inactive", "broken", "migrating"] }
+    },
+    {
+      "apiVersion": "portability.distribution.dsh.dev/v1alpha1",
+      "kind": "EnvironmentPortability",
+      "required": false,
+      "spec": { "modes": ["clone", "export", "migrate"] }
+    }
+  ]
+}

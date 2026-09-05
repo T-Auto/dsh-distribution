@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/T-Auto/dsh-distribution/schema/lifecycle/lifecycle/v1alpha1",
+  "title": "lifecycle/lifecycle",
+  "type": "object",
+  "properties": {
+    "states": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "declared",
+          "installed",
+          "available",
+          "active",
+          "inactive",
+          "broken",
+          "migrating"
+        ]
+      }
+    }
+  },
+  "required": [
+    "states"
+  ],
+  "additionalProperties": false
+}

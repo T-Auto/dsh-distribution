@@ -1,0 +1,36 @@
+{
+  "name": "@dsh-distribution/lifecycle",
+  "version": "0.1.0-alpha.1",
+  "type": "module",
+  "description": "DSH environment lifecycle protocol — Draft v1alpha1",
+  "license": "MIT",
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/T-Auto/dsh-distribution.git",
+    "directory": "packages/lifecycle"
+  },
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "import": "./lib/index.js"
+    },
+    "./schema/*": "./schema/*"
+  },
+  "files": [
+    "lib",
+    "schema",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc -b"
+  },
+  "dependencies": {
+    "@dsh-distribution/core": "workspace:^"
+  }
+}

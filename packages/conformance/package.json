@@ -1,0 +1,44 @@
+{
+  "name": "@dsh-distribution/conformance",
+  "version": "0.1.0-alpha.1",
+  "type": "module",
+  "description": "DSH environment conformance protocol — Draft v1alpha1",
+  "license": "MIT",
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/T-Auto/dsh-distribution.git",
+    "directory": "packages/conformance"
+  },
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "import": "./lib/index.js"
+    },
+    "./schema/*": "./schema/*"
+  },
+  "files": [
+    "lib",
+    "schema",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "bin": {
+    "dsh-distribution-check": "./lib/cli.js"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc -b"
+  },
+  "dependencies": {
+    "@dsh-distribution/core": "workspace:^",
+    "@dsh-distribution/composition": "workspace:^",
+    "@dsh-distribution/layout": "workspace:^",
+    "@dsh-distribution/discovery": "workspace:^",
+    "@dsh-distribution/lifecycle": "workspace:^",
+    "@dsh-distribution/portability": "workspace:^"
+  }
+}

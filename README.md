@@ -1,261 +1,112 @@
 # dsh-distribution
 
-> **DSH Environment Distribution Meta-Protocol**
-> 用于声明、发现和管理可运行 DSH 环境的最小元协议。
-
----
-
-## 这是什么？
-
-`dsh-distribution` 是 dsh 生态中与 `dsh-std` 正交的一层**环境元协议**。
-
-```text
-dsh-std
-    "How components interoperate."
-    运行中的组件如何互相理解。
-
-dsh-distribution
-    "How environments are identified and managed."
-    一个运行环境如何被外部世界理解。
-
-Implementations
-    "How environments actually run."
-    环境具体如何运行，交给实现。
-```
-
-更凝练地说：
+**DSH Environment Distribution Meta-Protocol · Draft / v1alpha1**
 
 > **dsh-std standardizes interaction.**
+>
 > **dsh-distribution standardizes environment identity and portability.**
 
-中文定位：
+它规范运行环境如何被描述，而不规范运行环境如何被实现。Distribution 是逻辑环境边界，不必然是目录、压缩包、容器或安装器。CLI、TUI、GUI、Server、云端、多路径环境均可采用，不要求使用某个 Manager 或 TypeScript SDK。
 
-> **它规范运行环境如何被描述，而不规范运行环境如何被实现。**
+本仓库是可验证的社区草案，不是官方标准、产品运行时或安全认证。现有概念 README 的目标已落实为规范、类型、schema、纯函数校验、发现示例与迁移计划原型；没有实现安装、进程管理、实际复制、凭据传输或市场服务。
 
----
+## 三项目分工
 
-## 核心承诺
+| 项目 | 权威范围 | 不在此处定义 |
+| --- | --- | --- |
+| [dsh-std](https://github.com/Yan-Zero/dsh-std) | 组件交互；协议声明/协商；manifest、facet、connection 等独立协议 | 发行物的环境实例管理 |
+| **dsh-distribution** | 发行物身份、实例身份、环境协议声明、组合引用、存储角色、发现、可迁移性 | 插件 API、组件运行方式、安装包格式、固定目录 |
+| [dsh-ecosystem-spec](https://github.com/T-Auto/dsh-ecosystem-spec) | 生态入口、采用指南、治理及产品准入 profile | 不在 profile 中重新定义公共协议；TUI 要求不倒灌公共契约 |
 
-`dsh-distribution` 不对整合包/发行物作者的功能性做任何约束。你的发行物可以是：
+它与 `dsh-std` 正交，不是必须采用的上下级框架。组件协议引用使用原协议的 `apiVersion + kind`；静态引用不等于实际支持，也不等于形成协商 agreement。详见[架构与上游映射](docs/architecture.md)。
 
-- 一个目录
-- 一个压缩包
-- 一个 Docker/OCI artifact
-- 一个远程安装源
-- 多个路径组成的逻辑环境
-- 一个 Manager 创建的虚拟环境
-- TUI / GUI / CLI / AGI / Server / Cloud / 无界面运行时……
-
-协议不关心你做成什么，只关心：
-
-> 这个环境是什么、属于哪个发行物、当前版本是什么、
-> 它由什么逻辑组件构成、它的可管理边界在哪里、
-> 配置/状态在哪里、如何被管理器发现、如何安全复制/导出/迁移。
-
----
-
-## 关键概念
-
-### Distribution 是逻辑环境，不必然是物理包
-
-```text
-Distribution is a logical environment, not necessarily a directory,
-archive, container, or installer.
-```
-
-协议描述的是 **logical distribution boundary**，而不是：
-
-- zip 文件格式
-- 固定目录结构
-- 安装器格式
-- 某个 Manager 的私有存储布局
-
-因此它不会被“整合包格式”锁死。
-
-### Identity：发行物身份 ≠ 环境实例身份
-
-必须区分两个身份：
-
-```text
-Distribution identity
-    my-agi-dist@1.4.0
-
-Environment instance
-    local-uuid-xxxxx
-```
-
-同一个发行物可以同时安装多份：
-
-```text
-~/env/a
-~/env/b
-```
-
-它们是两个不同的环境实例。未来做 snapshot、clone、migration 时，身份语义才不会混乱。
-
-### Composition：只引用组件契约，不重新定义
-
-`dsh-distribution` **不重新定义组件协议**。它只描述 composition graph，组件如何运行、插件 API、生命周期、能力协商等全部交给 `dsh-std` 或其他协议。
+## 最小描述符
 
 ```json
 {
-  "components": [
-    {
-      "ref": "registry:xxx/plugin@1.0.0"
-    }
-  ]
+  "apiVersion": "distribution.dsh.dev/v1alpha1",
+  "kind": "DistributionDescriptor",
+  "distribution": {
+    "id": "urn:example:distribution:headless",
+    "version": "2026.09"
+  },
+  "protocols": []
 }
 ```
 
-原则：
+- `distribution.id + version` 标识发行物；版本是 opaque release token，不强制 SemVer。
+- 每次安装的 `instanceId` 放在独立 `EnvironmentInstance` 记录，不写回公共发行物描述符。
+- `protocols` 是可插拔协议声明；只有 core 必选，其余按需采用。
+- `required: true` 表示消费者接受该描述符时必须理解并支持该协议；不是授权，更不要求所有产品采用它。
+- 自有协议可直接用命名空间坐标注册 `ProtocolCatalog`，无需修改 core。
+- 描述符必须可被消费者发现，但不规定文件名、全局注册表或中心目录。
 
-> dsh-distribution MAY reference component contracts defined by other protocols, including dsh-std.
-
-避免出现 `dsh-std manifest` + `distribution manifest` + `distribution plugin manifest` 三套 manifest 逐渐重叠的灾难。
-
-### Layout：Managed Storage Roles
-
-Layout 不是规定“目录必须叫什么”，而是声明**路径承担什么角色**：
-
-```json
-{
-  "layout": {
-    "roles": {
-      "config": "./config",
-      "extensions": "./vendor/extensions",
-      "state": "./state",
-      "data": "./data"
-    }
-  }
-}
-```
-
-核心是：
-
-> 这个位置承担 config role / extensions role / state role / data role。
-
-因此 Manager 不需要知道发行物内部实现，也能安全地：
-
-- 增删可安装组件；
-- 迁移配置；
-- 判断哪些状态可以复制、哪些不可迁移。
-
-术语建议使用 `extensions` 而不是 `plugins`，因为未来可安装组件不一定是 dsh plugin，还可能是：
+## 目录与包
 
 ```text
-skills
-models
-agents
-assets
-workflows
-adapters
-tools
+docs/
+  architecture.md          分层、依赖、dsh-std 映射
+  getting-started.md       作者与 Manager 接入指南
+  proposals/               六份规范性协议提案
+packages/
+  core/                    最小描述符、身份、catalog、兼容报告
+  composition/             组件引用与逻辑依赖图
+  layout/                  managed storage roles 和管理边界
+  discovery/               实例记录、发现结果、provider 示例
+  lifecycle/               环境状态观察，不规定激活命令
+  portability/             clone/export/migrate 计划、回滚 journal
+  conformance/             组合校验入口与只读 CLI
+conformance/               fixtures、requirement matrix、证据规则
+registry/                  本仓库协议坐标索引，不是安装源
+adapters/                  非规范性集成 note
+examples/                  JSON 描述符、无网络发现与 dry-run
+scripts/                   schema 生成与文档/边界门禁
+.changeset/                包级版本变更记录
 ```
 
-### Registration / Discovery：只规定可发现，不规定唯一机制
+[包索引](packages/README.md) · [提案索引](docs/proposals/README.md) · [安全边界](SECURITY.md) · [贡献规则](CONTRIBUTING.md)
 
-Core 只规定：
+## 本地开发和验证
 
-> A Distribution MUST have a discoverable descriptor.
+需要 Node.js `^22.19.0 || >=24.0.0`、pnpm `11.21.0`。运行库无第三方运行时依赖；workspace 包仅依赖必要的其他协议包。TypeScript、Ajv 和 changesets 是开发依赖。
 
-Discovery mechanism 完全开放，可以由不同 Manager/平台实现：
-
-```text
-filesystem discovery
-manager registry
-environment variable
-URI
-registry service
-container metadata
+```sh
+pnpm install --frozen-lockfile
+pnpm check
+node packages/conformance/lib/cli.js examples/managed.json
 ```
 
-统一抽象为：
+`pnpm check` 包含构建、测试、独立 Ajv schema 对照、CLI 测试、schema 漂移检查、文档链接/包边界检查和两个可运行示例。`pnpm check:pack` 另在临时目录打包七个包并离线安装，检查脱离 workspace 的 ESM、类型、schema 和 CLI 产物。`pnpm schemas:write` 重新生成 JSON Schema；不要手改生成产物。
 
-```text
-Discovery Provider
-    │
-    └── resolves Distribution Reference
-            │
-            └── Distribution Descriptor
+CLI 退出码：`0` 完整检查通过；`1` 已知 contract 无效；`2` 输入/用法错误；`3` 存在未检查的协议。`valid: true, complete: false` 不能宣称完整 conformance。第三方可使用自己实现的校验器，不要求安装本仓库包。
+
+## SDK 示例
+
+以下 workspace 包尚未发布；先在本仓库构建，或经审查后打包接入，不要假定 npm 已存在这些版本。
+
+```ts
+import { assessCompatibility } from '@dsh-distribution/core';
+import { checkDescriptor, createPublicCatalog } from '@dsh-distribution/conformance';
+import { coordinate as layout } from '@dsh-distribution/layout';
+
+const checked = checkDescriptor(descriptor); // JSON contract 是否有效/完整检查
+const report = assessCompatibility(descriptor, createPublicCatalog(), [layout]);
+// [layout] 是调用方实际支持的协议，不是从 catalog 自动推断出来的能力。
+// report.compatible 不是身份认证、授权、隔离证明或迁移许可。
 ```
 
-协议不把 `~/.dsh/distributions/` 之类的位置规定为唯一或推荐中心，避免 Linux / Windows / Container / Remote / Cloud 很快出现争论。
+## 迁移安全默认值
 
-### Isolation & Migration：隔离语义，而不是隔离实现
+`createMigrationPlan` 是无 IO 的保守 dry-run：secret 永远跳过；nonportable 跳过；shared/external 只引用；conditional 需要明确资源审批；可疑路径与已知重叠必须处理后才能继续。`ready` 仅表示**元数据层没有 blocked 条目**，不表示已取得文件权限或可直接运行。
 
-只定义环境的管理边界和可迁移性：
+执行方仍需真实路径 containment、符号链接/挂载点/URI alias 检查、SSRF 防护、来源认证、内容完整性校验、源 revision 锁定、目标 staging 与回滚证据。回滚不等于简单删除目录；源环境不会被本库退役或删除。详见[portability 提案](docs/proposals/portability.md)。
 
-```text
-这个环境的管理边界是什么？
-哪些资源属于它？
-哪些资源允许迁移？
-哪些资源不可迁移？
-```
+## 状态与兼容性
 
-例如：
+全部协议是 **Draft**，坐标是拟议名称，不代表域名控制权、官方注册或发布承诺。npm 初始版本为 `0.1.0-alpha.1`；wire 版本为 `v1alpha1`；发行物自己的版本是第三个独立维度。破坏性 wire 变更使用新坐标，不进行隐式版本降级。README 初稿的 `layout.roles` / `portability.config` 只是示意片段，迁移说明见[兼容性](docs/compatibility.md)。
 
-```json
-{
-  "portability": {
-    "config": "portable",
-    "state": "conditional",
-    "data": "external"
-  }
-}
-```
+本次建设不修改上游仓库、不升级 submodule、不自动配置 Actions、不发布 npm 包、不提交或推送 Git。可执行验证只证明本地草案实现，不构成跨实现互操作认证。
 
-Manager MAY expose `create` / `activate` / `deactivate` 或等价操作。协议不规定这些命令必须存在，因为 venv、container、remote runtime、embedded runtime、system service 的 activate 语义并不相同。
+## License
 
-协议层只需要定义最小的环境生命周期状态，例如：
-
-```text
-declared
-installed
-available
-active
-inactive
-broken
-migrating
-```
-
----
-
-## 分层边界
-
-```text
-┌─────────────────────────────────────────┐
-│            Implementations              │
-│                                         │
-│  TUI / GUI / CLI / AGI / Server / Cloud │
-├─────────────────────────────────────────┤
-│            dsh-distribution             │
-│                                         │
-│ identity · composition · discovery      │
-│ layout roles · portability              │
-├─────────────────────────────────────────┤
-│                dsh-std                  │
-│                                         │
-│ contracts · capabilities · lifecycle    │
-│ negotiation · adapters                  │
-└─────────────────────────────────────────┘
-```
-
-严格守住的边界：
-
-- 不定义运行方式；
-- 不定义包格式；
-- 不定义目录结构；
-- 不重新定义插件 API；
-- 不规定官方 Manager。
-
----
-
-## 状态
-
-- 当前为 **Draft / 概念初稿**。
-- 后续需要补充：
-  - `Distribution Descriptor` 的 JSON Schema；
-  - 最小 conformance fixtures；
-  - Discovery Provider 示例；
-  - 与 `dsh-std` 的引用映射；
-  - 迁移与回滚的最小数据模型。
+[MIT](LICENSE)

@@ -1,0 +1,7 @@
+{
+  "apiVersion": "distribution.dsh.dev/v1alpha1",
+  "kind": "DistributionDescriptor",
+  "distribution": { "id": "urn:example:distribution:headless", "version": "2026.09" },
+  "displayName": "Headless environment",
+  "protocols": []
+}
