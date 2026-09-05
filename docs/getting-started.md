@@ -1,50 +1,80 @@
-# 接入指南
+# 为你的 DSH 项目接入 dsh-distribution
 
-## 发行物作者
+**接入的目标：让支持 dsh-distribution 的工具，能用统一方式了解你的整套环境，而不必专门猜测和适配它。**
 
-1. 先读[最小示例](../examples/minimal.json)，给发行物分配稳定 namespaced URI ID 和 release token。
-2. 只添加需要的协议声明。完整示例见 [managed.json](../examples/managed.json)；不要为了「完整」而声称尚未实现的功能。
-3. 组件使用外部 ref，不复制其 manifest；配置/状态/数据分别标注资源归属、敏感性与可迁移性。
-4. 提供一种消费方可以取得 descriptor 的机制；文件名、OCI annotation、远程服务都由实现选择。
-5. `pnpm check` 后使用 CLI 校验实际 descriptor。未知协议须提供可信 definition 和独立 fixtures；`complete: false` 不是完整通过。
-6. 交给生态项目时附上所采用坐标、版本、fixture 结果及尚未证明的运行时要求，不宣称官方认证。
+你不需要先理解仓库里的包怎么划分。对作者而言，这是一次环境接入：整理项目的真实信息，生成环境说明，检查并随项目提供。编码助手可以完成格式转换和校验，你负责确认它无法判断的事实。
 
-## Manager 作者
+[交给 AI 完成 →](ai-quickstart.md) · [查看一份环境说明 →](../examples/managed.json)
 
-- 单独维护 EnvironmentInstance；同一 release 的两次安装分配不同实例 ID。
-- 对 provider 的输入做网络/文件来源策略，不自动获取任何 descriptor URI。
-- 用 `checkDescriptor` 检查数据，再用 `assessCompatibility` 与**实际支持坐标**比较。
-- 安全边界以 OS/容器/远程服务权限为准，不以 ownership 标签为准。
-- 生命周期是观察 vocabulary，不要求 Manager 支持 activate 命令。
-- 迁移先 dry-run，再绑定 source revision 和目标 staging；即便 ready=true，也需要执行器的真实路径、完整性和回滚验证。
+## 1. 让 AI 先了解你的项目
 
-可运行示例：
+不需要你填写协议选择表。让 AI 读取项目，并用普通话整理以下信息供你确认：
+
+| 要了解的事情 | 例如 | 需要注意 |
+| --- | --- | --- |
+| 项目身份和版本 | Alice 的 DSH 工作台，版本 1.0.0 | 项目标识应保持稳定，不与别人的项目混淆。 |
+| 环境的组成 | DSH 运行时、桌面界面、已安装插件 | 使用真实来源和现有组件信息，不另造一套插件格式。 |
+| 配置与数据位置 | 设置、聊天记录、扩展、缓存、用户资料 | 区分环境自己的内容、共享内容和外部数据；不能只看目录名字猜。 |
+| 安装和管理方式 | 本地整合包、容器、在线服务；怎样找到某次安装 | 同一项目装两份，不应被认成同一个安装实例。 |
+| 状态和迁移条件 | 状态从哪里取得，哪些数据可复制，哪些需要停机或重新登录 | 没有真实实现或证据时，不声明“已支持”或“可安全迁移”。 |
+
+这些是同一个环境的不同信息，不是几套独立的接入任务。项目没有某类数据或操作时，AI 应按规范处理“不适用”，不让你为了接入新造一个服务。
+
+项目 ID 可以使用 `urn:dsh:distribution:alice:my-dsh` 这样的写法，换成自己的用户名和项目名即可，建议用英文字母、数字和连字符。无需申请域名或注册，但你仍需避免 ID 冲突。版本可以是 `1.0.0`，不要包含空格。
+
+## 2. 生成一份环境说明
+
+让 AI 参考[环境说明示例](../examples/managed.json)和现行规范，将确认后的事实写入项目的说明文件。对于本地整合包，可以保存为 `dsh-distribution.json`；文件名不是强制规定。容器或在线服务也可以使用适合自己的提供方式。
+
+你审阅时只需要先看懂这些事情：
+
+- 项目身份、版本、组件来源是否正确？
+- 配置和记录的位置是否与真实项目一致？
+- 是否把共享文件误写成项目独占，或者把含密钥的内容写成可直接复制？
+- 有没有声称项目实际还不能提供的状态、备份或迁移功能？
+
+**不必照搬示例中的目录、组件或功能声明。** 示例用于展示同一套说明如何容纳这些信息，不是让你的项目假装与示例一模一样。不同环境填写不同的真实内容，遵循的格式和含义保持一致。
+
+公共说明描述的是这款项目。用户每次安装产生的实例身份、机器路径、当前状态及迁移记录，由管理工具结合实际安装维护；不要在公共说明中硬编码某位用户的安装 ID 或私有路径。
+
+如果某类信息无法确认，让 AI 在交付报告中列出问题，不往 JSON 里编造 `pending` 等字段，也不要用“留空后格式通过”替代对项目的实际检查。
+
+## 3. 检查格式和信息是否一致
+
+下面的命令供编码助手或熟悉开发工具的人使用。在 **dsh-distribution 仓库根目录**运行，不是在你的整合包里安装开发依赖。
+
+需要 Node.js `^22.19.0 || >=24.0.0`、pnpm `11.21.0`：
 
 ```sh
 pnpm install --frozen-lockfile
 pnpm build
-pnpm examples
-node packages/conformance/lib/cli.js examples/minimal.json
+node packages/conformance/lib/cli.js "你的说明文件的绝对路径"
 ```
 
-## 私有协议
+把引号内容换成实际路径。检查器只读取说明文件，不启动项目、不安装插件、不复制或删除数据。npm 包尚未发布，不要假定可以直接从 npm 安装它们。
 
-```ts
-import { ProtocolCatalog, s, validate } from '@dsh-distribution/core';
+结果可以这样理解：
 
-const snapshotSpec = s.object({ backend: s.enum('object-store', 'local') });
-const definition = {
-  apiVersion: 'example.org/v1alpha1',
-  kind: 'SnapshotBackend',
-  validate: (value: unknown) => validate(snapshotSpec, value),
-};
-const catalog = new ProtocolCatalog().register(definition);
-```
+- `valid: true` 且 `complete: true`：文件中已经声明的内容全部检查通过。
+- `valid: false`：有错误，按 `issues` 中的位置和原因修正。
+- `valid: true` 但 `complete: false`：有检查器还不认识的内容，不能报告为完整校验通过。
 
-该 definition 的规范权威属于对应命名空间的协议文档，不属于本仓库。Definition 是可执行本地代码，只注册可信实现。若要扩展公共 catalog，可 `createPublicCatalog().register(definition)`。未知 optional 声明可以保留/跳过，但不能把其 spec 当成经过检查的数据去执行。
+**校验器只能检查你写进去的信息，不能替你调查项目，也不能证明管理操作已经实现。** 还需要对照前面整理的项目事实，确认没有写错、漏掉适用信息或虚报能力。未实际运行校验器时，AI 应明确说“未验证”。
 
-## 独立语言实现
+## 4. 随项目提供，后续一起维护
 
-读取 `registry/protocols.json` 和 `packages/*/schema/*.schema.json`，使用 JSON Schema 2020-12，再实现各提案的语义规则：唯一坐标、DAG、归属一致性、实例绑定、revision、copy 决策、journal FSM。纯 schema 检查不能替代这些规则。
+把说明随整合包或源码提供，并在项目 README 中告诉使用者在哪里找到它。支持此协议的工具可以据此读取信息；工具是否能真正备份、切换或迁移环境，取决于它实现了哪些操作。
 
-运行 `conformance/fixtures/descriptors.json` 中的用例，并移植 tests 中针对各 domain 的输入。提交证据时报告 schema/semantic/implementation 三层覆盖，不只提供一个「通过」徽章。
+以后发布新版时，同步维护版本、组件和数据位置等变化。通常保留固定项目 ID，不要因为用户装在另一台电脑上就修改公共项目身份。
+
+交付时可以用下面这段话说明接入结果，但只填写已有证据的内容：
+
+> 本项目已提供 dsh-distribution 环境说明。环境身份、组成和数据管理信息见［文件位置］；校验结果为［实际结果］。具体管理操作由支持该协议的工具提供，当前已验证的工具和操作为［如实列出；没有则说明尚未验证］。
+
+## 作者需要记住的边界
+
+**你接入的是一套共同语言，不是在给项目换运行框架。** 无需改成指定目录，也不应为了接入重写插件或安装一套不需要的运行库。
+
+说明文件不保存密码或密钥；“可迁移”不等于“可以公开”。实际文件操作需要权限、完整性和恢复保障，不能因为说明合法就直接开始复制或删除。
+
+工具开发细节见[开发指南](development.md)，精确规则见[规范提案](proposals/README.md)。

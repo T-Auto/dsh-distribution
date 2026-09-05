@@ -1,13 +1,14 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, writeFile, rm } from 'node:fs/promises';
+import { mkdtemp, readFile, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
-import { join, resolve } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import Ajv2020 from 'ajv/dist/2020.js';
 import { schemas } from '../scripts/schemas.mjs';
 import { validate, schemaDocument } from '../packages/core/lib/index.js';
 import { bindInstance } from '../packages/discovery/lib/index.js';
+import { checkDescriptor } from '../packages/conformance/lib/index.js';
 import { createMigrationPlan } from '../packages/portability/lib/index.js';
 import { managed, minimal, layout, request, journal } from './fixtures.mjs';
 const reference = 'urn:test:descriptor:1';
@@ -34,6 +35,18 @@ for (const [name, schema] of Object.entries(schemas)) test(`SCHEMA ${name}: inde
     for (const invalid of [null, false, 3.2, '', [], {}]) samples.push({ ...good, [key]: invalid });
   }
   for (const sample of samples) assert.equal(validate(schema, sample).ok, check(sample), `${name}: ${JSON.stringify(sample)}`);
+});
+test('DOCS linked environment examples pass complete descriptor validation', async () => {
+  for (const path of ['README.md', 'docs/getting-started.md']) {
+    const text = await readFile(path, 'utf8');
+    const links = [...text.matchAll(/\]\(([^)]+\.json)\)/g)];
+    assert.ok(links.length > 0, `${path} should link a machine-readable environment example`);
+    for (const [, target] of links) {
+      const file = resolve(dirname(path), target);
+      const descriptor = JSON.parse(await readFile(file, 'utf8'));
+      assert.equal(checkDescriptor(descriptor).complete, true, target);
+    }
+  }
 });
 test('CLI bounded read-only JSON reports and all exit statuses', async () => {
   const dir = await mkdtemp(join(tmpdir(), 'dsh-distribution-test-'));

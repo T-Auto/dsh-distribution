@@ -1,5 +1,7 @@
 # Package index
 
+本文面向需要导入代码库的工具开发者。整合包作者通过[环境接入指南](../docs/getting-started.md)采用统一的 dsh-distribution 协议，由工具映射项目的真实信息，不必逐个选择、安装或学习这些包。七个包是内部代码分工，不是面向作者的七项产品选项；`conformance` 是聚合校验工具。
+
 全部包为 ESM、Draft、初始版本 `0.1.0-alpha.1`，尚未发布。实现可只采用规范，不依赖 TypeScript 包。
 
 | Package | 职责 | Runtime dependencies |

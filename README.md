@@ -1,111 +1,81 @@
 # dsh-distribution
 
-**DSH Environment Distribution Meta-Protocol · Draft / v1alpha1**
+**让不同的 DSH 整合包，都能被同一种方式识别和管理。**
 
-> **dsh-std standardizes interaction.**
->
-> **dsh-distribution standardizes environment identity and portability.**
 
-它规范运行环境如何被描述，而不规范运行环境如何被实现。Distribution 是逻辑环境边界，不必然是目录、压缩包、容器或安装器。CLI、TUI、GUI、Server、云端、多路径环境均可采用，不要求使用某个 Manager 或 TypeScript SDK。
 
-本仓库是可验证的社区草案，不是官方标准、产品运行时或安全认证。现有概念 README 的目标已落实为规范、类型、schema、纯函数校验、发现示例与迁移计划原型；没有实现安装、进程管理、实际复制、凭据传输或市场服务。
+你可以把 DSH 打包成一建安装包，也可以吧 DSH 做成独立桌面应用、机器人。但当别人想知道“这是什么版本”“配置和聊天记录在哪”“换电脑时该带走哪些文件”，每个项目往往都有自己的答案，管理工具也得逐个适配。
 
-## 三项目分工
+**dsh-distribution 是一套 DSH 环境描述与管理协议：用一份统一的环境说明，把这些信息交代清楚，让支持它的工具不必再猜你的项目是怎么组织的。**
 
-| 项目 | 权威范围 | 不在此处定义 |
-| --- | --- | --- |
-| [dsh-std](https://github.com/Yan-Zero/dsh-std) | 组件交互；协议声明/协商；manifest、facet、connection 等独立协议 | 发行物的环境实例管理 |
-| **dsh-distribution** | 发行物身份、实例身份、环境协议声明、组合引用、存储角色、发现、可迁移性 | 插件 API、组件运行方式、安装包格式、固定目录 |
-| [dsh-ecosystem-spec](https://github.com/T-Auto/dsh-ecosystem-spec) | 生态入口、采用指南、治理及产品准入 profile | 不在 profile 中重新定义公共协议；TUI 要求不倒灌公共契约 |
+对整合包作者来说，可以这样理解：
 
-它与 `dsh-std` 正交，不是必须采用的上下级框架。组件协议引用使用原协议的 `apiVersion + kind`；静态引用不等于实际支持，也不等于形成协商 agreement。详见[架构与上游映射](docs/architecture.md)。
+> **我的项目遵守 dsh-distribution，就有了统一的环境身份、组成说明和数据管理信息，更容易被工具识别、管理和迁移。**
 
-## 最小描述符
+## 接入后有什么好处？
 
-```json
-{
-  "apiVersion": "distribution.dsh.dev/v1alpha1",
-  "kind": "DistributionDescriptor",
-  "distribution": {
-    "id": "urn:example:distribution:headless",
-    "version": "2026.09"
-  },
-  "protocols": []
-}
-```
+| 你关心的事 | 统一协议带来的帮助 |
+| --- | --- |
+| **让别人认得出我的整合包** | 明确项目、版本和某次安装的身份，避免把不同版本、不同安装混在一起。 |
+| **不用每个管理工具都重新适配** | 用相同格式说明组件、配置、记录和数据的位置，减少针对各项目硬编码。 |
+| **多套 DSH 环境放在一起更好管理** | 说清哪些资源属于哪套环境、哪些是共享的，为管理工具区分边界提供依据。 |
+| **备份、换电脑时少猜少漏** | 说明哪些数据可以带走、哪些需要额外处理、哪些不能自动复制，让工具有依据地规划迁移。 |
+| **出问题时更容易定位和恢复** | 用统一方式表达环境状态、迁移进度和恢复记录，方便支持这些功能的工具展示和处理。 |
+| **以后换界面、换打包方式更自由** | 协议不绑定任何目录名或安装器，不为了接入而限制产品形态。 |
 
-- `distribution.id + version` 标识发行物；版本是 opaque release token，不强制 SemVer。
-- 每次安装的 `instanceId` 放在独立 `EnvironmentInstance` 记录，不写回公共发行物描述符。
-- `protocols` 是可插拔协议声明；只有 core 必选，其余按需采用。
-- `required: true` 表示消费者接受该描述符时必须理解并支持该协议；不是授权，更不要求所有产品采用它。
-- 自有协议可直接用命名空间坐标注册 `ProtocolCatalog`，无需修改 core。
-- 描述符必须可被消费者发现，但不规定文件名、全局注册表或中心目录。
+这些优势来自**工具能够读懂同一份说明**，不是多写一个文件就自动完成隔离或搬家。实际备份、复制和恢复仍由管理工具实现。
 
-## 目录与包
+## 我需要做什么？
 
-```text
-docs/
-  architecture.md          分层、依赖、dsh-std 映射
-  getting-started.md       作者与 Manager 接入指南
-  proposals/               六份规范性协议提案
-packages/
-  core/                    最小描述符、身份、catalog、兼容报告
-  composition/             组件引用与逻辑依赖图
-  layout/                  managed storage roles 和管理边界
-  discovery/               实例记录、发现结果、provider 示例
-  lifecycle/               环境状态观察，不规定激活命令
-  portability/             clone/export/migrate 计划、回滚 journal
-  conformance/             组合校验入口与只读 CLI
-conformance/               fixtures、requirement matrix、证据规则
-registry/                  本仓库协议坐标索引，不是安装源
-adapters/                  非规范性集成 note
-examples/                  JSON 描述符、无网络发现与 dry-run
-scripts/                   schema 生成与文档/边界门禁
-.changeset/                包级版本变更记录
-```
+**让你的项目提供一份符合协议的环境说明。** 可以把它理解成随整合包附带的“产品说明书”，既给人看，也给程序读。
 
-[包索引](packages/README.md) · [提案索引](docs/proposals/README.md) · [安全边界](SECURITY.md) · [贡献规则](CONTRIBUTING.md)
+它把一个环境作为整体描述：
 
-## 本地开发和验证
+- **它是谁**：项目标识、发布版本，以及如何区分每次安装。
+- **它由什么组成**：运行时、界面、插件等组件的来源。
+- **它的数据在哪里**：配置、聊天记录、扩展、缓存等位置，以及管理归属。
+- **外部工具怎么管理它**：如何找到它、了解状态，以及搬家时哪些内容能处理、失败后如何恢复。
 
-需要 Node.js `^22.19.0 || >=24.0.0`、pnpm `11.21.0`。运行库无第三方运行时依赖；workspace 包仅依赖必要的其他协议包。TypeScript、Ajv 和 changesets 是开发依赖。
+你不需要先学一套新架构，也不需要改成指定的目录结构。**你负责说明项目的真实情况，格式和校验可以交给 AI 或接入工具处理。** 不适用的信息按规范处理，尚未实现的能力如实说明，不必为了填写说明编造功能。
 
-```sh
-pnpm install --frozen-lockfile
-pnpm check
-node packages/conformance/lib/cli.js examples/managed.json
-```
+[查看接入指南 →](docs/getting-started.md) · [查看环境说明示例 →](examples/managed.json)
 
-`pnpm check` 包含构建、测试、独立 Ajv schema 对照、CLI 测试、schema 漂移检查、文档链接/包边界检查和两个可运行示例。`pnpm check:pack` 另在临时目录打包七个包并离线安装，检查脱离 workspace 的 ESM、类型、schema 和 CLI 产物。`pnpm schemas:write` 重新生成 JSON Schema；不要手改生成产物。
+## 我用 AI 写项目，怎么让它接入？
 
-CLI 退出码：`0` 完整检查通过；`1` 已知 contract 无效；`2` 输入/用法错误；`3` 存在未检查的协议。`valid: true, complete: false` 不能宣称完整 conformance。第三方可使用自己实现的校验器，不要求安装本仓库包。
+把下面这段交给你的编码助手：
 
-## SDK 示例
+> 请按照 https://github.com/T-Auto/dsh-distribution 的接入指南，为我的 DSH 项目接入 dsh-distribution。先检查项目的身份与版本、组件组成、配置和数据位置、安装管理方式及迁移条件，再生成符合规范的环境说明并验证。请把它作为一次完整的环境接入处理，不要让我逐个选择内部协议包。无法确定的事实先问我，不声明尚未实现的能力，不擅自改变现有目录和启动方式，不执行真实迁移。最后告诉我哪些信息已经可被工具读取，哪些操作仍需要管理工具支持。
 
-以下 workspace 包尚未发布；先在本仓库构建，或经审查后打包接入，不要假定 npm 已存在这些版本。
+[可直接复制的完整提示词 →](docs/ai-quickstart.md)
 
-```ts
-import { assessCompatibility } from '@dsh-distribution/core';
-import { checkDescriptor, createPublicCatalog } from '@dsh-distribution/conformance';
-import { coordinate as layout } from '@dsh-distribution/layout';
+## 会不会影响我原来的项目？
 
-const checked = checkDescriptor(descriptor); // JSON contract 是否有效/完整检查
-const report = assessCompatibility(descriptor, createPublicCatalog(), [layout]);
-// [layout] 是调用方实际支持的协议，不是从 catalog 自动推断出来的能力。
-// report.compatible 不是身份认证、授权、隔离证明或迁移许可。
-```
+**协议不决定你的项目怎么运行，只统一它如何向外部说明自己。**
 
-## 迁移安全默认值
+- 原来怎么打包、怎么启动，仍然可以怎么做。
+- 不要求重写插件、替换界面或采用指定的管理器。
+- 不要求把本仓库的开发依赖装进整合包。
+- 不规定所有项目都必须有本地目录、常驻进程或激活命令。
 
-`createMigrationPlan` 是无 IO 的保守 dry-run：secret 永远跳过；nonportable 跳过；shared/external 只引用；conditional 需要明确资源审批；可疑路径与已知重叠必须处理后才能继续。`ready` 仅表示**元数据层没有 blocked 条目**，不表示已取得文件权限或可直接运行。
+终端工具、桌面应用、容器、在线服务都可以描述自己的真实情况。它们遵守的是同一套协议，不需要长成同一种产品。
 
-执行方仍需真实路径 containment、符号链接/挂载点/URI alias 检查、SSRF 防护、来源认证、内容完整性校验、源 revision 锁定、目标 staging 与回滚证据。回滚不等于简单删除目录；源环境不会被本库退役或删除。详见[portability 提案](docs/proposals/portability.md)。
+## 现在能用到什么程度？
 
-## 状态与兼容性
+当前是 **Draft（草案）**，仓库已提供环境说明格式、校验工具、发现示例，以及迁移计划和恢复日志模型，欢迎试用和反馈。
 
-全部协议是 **Draft**，坐标是拟议名称，不代表域名控制权、官方注册或发布承诺。npm 初始版本为 `0.1.0-alpha.1`；wire 版本为 `v1alpha1`；发行物自己的版本是第三个独立维度。破坏性 wire 变更使用新坐标，不进行隐式版本降级。README 初稿的 `layout.roles` / `portability.config` 只是示意片段，迁移说明见[兼容性](docs/compatibility.md)。
+**这里不是安装器，也不提供真实文件迁移执行器。** 格式校验通过不等于数据安全认证；密码、密钥不要写进说明文件。现有 DSH 工具是否能读取或操作这些信息，需要看具体工具的适配情况。仓库中的 npm 包尚未发布，接入方式见指南。
 
-本次建设不修改上游仓库、不升级 submodule、不自动配置 Actions、不发布 npm 包、不提交或推送 Git。可执行验证只证明本地草案实现，不构成跨实现互操作认证。
+## 和其他 DSH 项目有什么关系？
+
+- [dsh-std](https://github.com/Yan-Zero/dsh-std)：让**插件、界面和运行时互相配合**。
+- **dsh-distribution**：让**一整套 DSH 环境能被外部工具识别和管理**。
+- [dsh-ecosystem-spec](https://github.com/T-Auto/dsh-ecosystem-spec)：**生态总入口**。
+
+## 开发者资料
+
+接入工具、管理器或参与协议开发时，可以查阅：
+
+[开发指南](docs/development.md) · [架构](docs/architecture.md) · [规范提案](docs/proposals/README.md) · [包索引](packages/README.md) · [一致性测试](conformance/README.md) · [安全边界](SECURITY.md) · [兼容性](docs/compatibility.md) · [贡献规则](CONTRIBUTING.md)
 
 ## License
 
