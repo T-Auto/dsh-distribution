@@ -32,6 +32,10 @@ CLI：退出 0=完整通过，1=无效，2=输入错误，3=存在未知协议�
 | PORT-03..05 | portability/plan | 默认动作、secret、conditional、重叠、伪造 readiness/reason tests | 真实路径 alias、外来计划与实际 layout 绑定 |
 | PORT-06..07 | portability/journal | 全状态对矩阵、失败回滚/重试、stale/overflow | 持久原子 CAS，not-tested |
 | PORT-08..10 | 执行器 obligation | 无执行器；明确 not-tested | 全部实际迁移/校验/崩溃恢复/源退役 |
+| LOD-01..03 | lodgement（proposal，schema 未固化） | 结构 schema 未生成；语义 validator 未实现 | 跨实现可枚举位置契约，not-tested |
+| LOD-04 | lodgement（proposal） | 无自动测试（协议明确不规定 cadence/性能） | 消费端发现时机/轮询/性能，not-tested |
+| LOD-05..07 | lodgement + discovery | 结构样例未固化；语义 validator 未实现 | 多来源选择、来源认证、Lodgement 仅作候选全集，not-tested |
+| LOD-08..09 | lodgement（proposal） | 半写不可见 / removed 被忽略 / 跨管理器删除权 / 共享位置不可删 / 崩溃可重试 —— 语义与事务校验未实现 | 软删除、删除归属、事务性卸载残留，not-tested |
 | 跨语言 schema | 全部 12 份 schema | [Ajv/CLI tests](../tests/schema-cli.test.mjs) | 非 JS 独立实现尚无证据 |
 
 ## 运行与提交证据
