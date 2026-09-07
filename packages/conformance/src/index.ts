@@ -4,7 +4,8 @@ import { definition as layout } from '@dsh-distribution/layout';
 import { definition as discovery } from '@dsh-distribution/discovery';
 import { definition as lifecycle } from '@dsh-distribution/lifecycle';
 import { definition as portability } from '@dsh-distribution/portability';
-export const publicDefinitions = Object.freeze([composition, layout, discovery, lifecycle, portability]);
+import { definition as lodgement } from '@dsh-distribution/lodgement';
+export const publicDefinitions = Object.freeze([composition, layout, discovery, lifecycle, portability, lodgement]);
 export function createPublicCatalog(): ProtocolCatalog {
   const catalog = new ProtocolCatalog();
   for (const definition of publicDefinitions) catalog.register<unknown>(definition);

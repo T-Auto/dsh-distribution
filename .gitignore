@@ -13,3 +13,6 @@ Thumbs.db
 .pi-subagents/
 .workspace/
 artifacts/
+
+# Local run artifacts
+/test-output/

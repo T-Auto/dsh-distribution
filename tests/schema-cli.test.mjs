@@ -24,6 +24,8 @@ const values = {
   'lifecycle/observation': { apiVersion: 'lifecycle.distribution.dsh.dev/v1alpha1', kind: 'EnvironmentObservation', instanceId: instance.instanceId, revision: 1, state: 'active' },
   'portability/portability': { modes: ['clone'] }, 'portability/request': request,
   'portability/plan': createMigrationPlan(layout, request).value, 'portability/journal': journal,
+  'lodgement/lodgement': { apiVersion: 'discovery.distribution.dsh.dev/v1alpha1', kind: 'Lodgement', entries: [] },
+  'lodgement/entry': { apiVersion: 'discovery.distribution.dsh.dev/v1alpha1', kind: 'DiscoverableEntry', instanceId: 'urn:test:instance:lodgement', distribution: { id: 'urn:test:dist:a', version: '1' }, descriptorRef: reference, revision: 0, contentDigest: 'sha256:test', status: 'published' },
 };
 for (const [name, schema] of Object.entries(schemas)) test(`SCHEMA ${name}: independent Ajv agrees with structural validator`, () => {
   const ajv = new Ajv2020({ allErrors: true, strict: true });

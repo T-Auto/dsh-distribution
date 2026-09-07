@@ -21,6 +21,9 @@
     },
     {
       "path": "packages/conformance"
+    },
+    {
+      "path": "packages/lodgement"
     }
   ]
 }

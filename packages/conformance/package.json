@@ -39,6 +39,7 @@
     "@dsh-distribution/layout": "workspace:^",
     "@dsh-distribution/discovery": "workspace:^",
     "@dsh-distribution/lifecycle": "workspace:^",
-    "@dsh-distribution/portability": "workspace:^"
+    "@dsh-distribution/portability": "workspace:^",
+    "@dsh-distribution/lodgement": "workspace:^"
   }
 }

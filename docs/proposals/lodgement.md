@@ -73,12 +73,12 @@ DIST-004 的 Discovery 只回答"给定一个已知 URI reference，解析出 re
 
 - 结构性：新增 JSON Schema 2020-12（`lodgement` / `entry`），由 `pnpm schemas:write` 生成，不手改生成物。
 - 语义：跨字段（instanceId URI、revision 非负、contentDigest 必填、封闭字段）校验器与 fixtures。
-- 单元：原子发布（半写不可见）、重复 instanceId 拒绝、descriptorRef 形状、detached snapshot、LOD-04 不引入轮询/推送（校验器不持有 IO/timer）。
+- 单元：原子发布（半写不可见）、重复 instanceId 拒绝、descriptorRef 形状、detached snapshot、removed 忽略、删除权与共享载体保护、LOD-04 不引入轮询/推送（校验器不持有 IO/timer）。
 - 实现层证据（沿用 conformance 分层第三层）：持久全局唯一 registry、来源认证、签名、真实发现/性能语义均标记 **not-tested**，不在此仓库由纯函数测试冒充通过。
 
 ## Conformance impact
 
-在 [conformance requirement matrix](../../conformance/README.md) 增加 LOD-01..07 行；第三层（实现证据）列为 not-tested。`checkDescriptor` 对未知 Lodgement 协议保持 unchecked。
+在 [conformance requirement matrix](../../conformance/README.md) 增加 LOD-01..09 行；结构与纯语义行为由 fixtures 和 automated tests 固化；第三层（真实事务、来源认证、全局唯一 registry、崩溃恢复）列为 not-tested。`checkDescriptor` 对未知 Lodgement 协议保持 unchecked。
 
 ## Migration
 

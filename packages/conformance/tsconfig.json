@@ -25,6 +25,9 @@
     },
     {
       "path": "../portability"
+    },
+    {
+      "path": "../lodgement"
     }
   ]
 }

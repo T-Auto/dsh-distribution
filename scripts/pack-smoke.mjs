@@ -17,9 +17,9 @@ function run(command, args, cwd) {
 try {
   const tarballs = join(temp, 'tarballs'); const consumer = join(temp, 'consumer');
   await mkdir(tarballs); await mkdir(consumer);
-  for (const name of ['core', 'composition', 'layout', 'discovery', 'lifecycle', 'portability', 'conformance']) run('pnpm', ['pack', '--pack-destination', tarballs], resolve(root, 'packages', name));
+  for (const name of ['core', 'composition', 'layout', 'discovery', 'lifecycle', 'portability', 'lodgement', 'conformance']) run('pnpm', ['pack', '--pack-destination', tarballs], resolve(root, 'packages', name));
   const files = (await readdir(tarballs)).filter(name => name.endsWith('.tgz'));
-  if (files.length !== 7) throw new Error('Expected seven package tarballs');
+  if (files.length !== 8) throw new Error('Expected eight package tarballs');
   await writeFile(join(consumer, 'package.json'), JSON.stringify({ private: true, type: 'module' }));
   run('npm', ['install', '--offline', '--ignore-scripts', '--no-audit', '--no-fund', ...files.map(name => join(tarballs, name))], consumer);
   const probe = `import { checkDescriptor } from '@dsh-distribution/conformance';
@@ -27,13 +27,13 @@ import { readFileSync } from 'node:fs';
 const schema = JSON.parse(readFileSync(new URL(import.meta.resolve('@dsh-distribution/core/schema/descriptor.schema.json')), 'utf8'));
 const report = checkDescriptor({ apiVersion: 'distribution.dsh.dev/v1alpha1', kind: 'DistributionDescriptor', distribution: { id: 'urn:example:packed', version: '1' }, protocols: [] });
 if (!report.complete || !schema.$schema) throw new Error('Installed package failure');
-console.log('Seven packed packages install offline; ESM, declarations, schema exports and CLI artifact verified.');`;
+console.log('Eight packed packages install offline; ESM, declarations, schema exports and CLI artifact verified.');`;
   await writeFile(join(consumer, 'probe.mjs'), probe);
   const result = spawnSync(process.execPath, ['probe.mjs'], { cwd: consumer, encoding: 'utf8' });
   if (result.status !== 0) throw new Error(result.stderr);
   const cli = spawnSync(process.execPath, ['node_modules/@dsh-distribution/conformance/lib/cli.js', '--help'], { cwd: consumer, encoding: 'utf8' });
   if (cli.status !== 0) throw new Error(cli.stderr);
-  for (const name of ['core', 'composition', 'layout', 'discovery', 'lifecycle', 'portability', 'conformance']) {
+  for (const name of ['core', 'composition', 'layout', 'discovery', 'lifecycle', 'portability', 'lodgement', 'conformance']) {
     const files = await readdir(join(consumer, 'node_modules', '@dsh-distribution', name, 'lib'));
     if (!files.includes('index.d.ts')) throw new Error(`Missing declarations for ${name}`);
   }

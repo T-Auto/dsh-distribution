@@ -24,7 +24,7 @@ for (const path of await walk(root)) {
     links++;
   }
 }
-const allowed = { core: [], composition: ['core'], layout: ['core'], discovery: ['core'], lifecycle: ['core'], portability: ['core', 'layout'], conformance: ['core', 'composition', 'layout', 'discovery', 'lifecycle', 'portability'] };
+const allowed = { core: [], composition: ['core'], layout: ['core'], discovery: ['core'], lifecycle: ['core'], portability: ['core', 'layout'], lodgement: ['core'], conformance: ['core', 'composition', 'layout', 'discovery', 'lifecycle', 'portability', 'lodgement'] };
 for (const [name, deps] of Object.entries(allowed)) {
   const pkg = JSON.parse(await readFile(`packages/${name}/package.json`, 'utf8'));
   assert.equal(pkg.name, `@dsh-distribution/${name}`);

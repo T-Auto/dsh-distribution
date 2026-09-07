@@ -5,6 +5,7 @@ import { layoutSchema } from '../packages/layout/lib/index.js';
 import { discoverySchema, instanceSchema, resolutionSchema } from '../packages/discovery/lib/index.js';
 import { lifecycleSchema, observationSchema } from '../packages/lifecycle/lib/index.js';
 import { portabilitySchema, requestSchema, planSchema, journalSchema } from '../packages/portability/lib/index.js';
+import { lodgementSchema, entrySchema } from '../packages/lodgement/lib/index.js';
 export const schemas = {
   'core/descriptor': descriptorSchema, 'composition/composition': compositionSchema,
   'layout/layout': layoutSchema, 'discovery/discovery': discoverySchema,
@@ -12,6 +13,7 @@ export const schemas = {
   'lifecycle/lifecycle': lifecycleSchema, 'lifecycle/observation': observationSchema,
   'portability/portability': portabilitySchema, 'portability/request': requestSchema,
   'portability/plan': planSchema, 'portability/journal': journalSchema,
+  'lodgement/lodgement': lodgementSchema, 'lodgement/entry': entrySchema,
 };
 if (process.argv[1]?.replaceAll('\\', '/').endsWith('/scripts/schemas.mjs')) {
   for (const [name, schema] of Object.entries(schemas)) {

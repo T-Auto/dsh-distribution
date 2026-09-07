@@ -1,0 +1,58 @@
+[
+  {
+    "id": "published",
+    "valid": true,
+    "document": {
+      "apiVersion": "discovery.distribution.dsh.dev/v1alpha1",
+      "kind": "Lodgement",
+      "entries": [{
+        "apiVersion": "discovery.distribution.dsh.dev/v1alpha1",
+        "kind": "DiscoverableEntry",
+        "instanceId": "urn:test:instance:published",
+        "distribution": { "id": "urn:test:dist:one", "version": "1" },
+        "descriptorRef": "urn:test:descriptor:one",
+        "revision": 0,
+        "contentDigest": "sha256:published",
+        "publisher": "urn:test:publisher:one",
+        "status": "published"
+      }]
+    }
+  },
+  {
+    "id": "removed",
+    "valid": true,
+    "document": {
+      "apiVersion": "discovery.distribution.dsh.dev/v1alpha1",
+      "kind": "Lodgement",
+      "entries": [{
+        "apiVersion": "discovery.distribution.dsh.dev/v1alpha1",
+        "kind": "DiscoverableEntry",
+        "instanceId": "urn:test:instance:removed",
+        "distribution": { "id": "urn:test:dist:one", "version": "1" },
+        "descriptorRef": "urn:test:descriptor:one",
+        "revision": 1,
+        "contentDigest": "sha256:removed",
+        "publisher": "urn:test:publisher:one",
+        "status": "removed"
+      }]
+    }
+  },
+  {
+    "id": "half-written",
+    "valid": false,
+    "code": "SCHEMA_INVALID",
+    "document": {
+      "apiVersion": "discovery.distribution.dsh.dev/v1alpha1",
+      "kind": "Lodgement",
+      "entries": [{
+        "apiVersion": "discovery.distribution.dsh.dev/v1alpha1",
+        "kind": "DiscoverableEntry",
+        "instanceId": "urn:test:instance:half-written",
+        "distribution": { "id": "urn:test:dist:one", "version": "1" },
+        "descriptorRef": "urn:test:descriptor:one",
+        "revision": 0,
+        "status": "published"
+      }]
+    }
+  }
+]
