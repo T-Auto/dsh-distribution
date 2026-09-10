@@ -36,6 +36,10 @@ CLI：退出 0=完整通过，1=无效，2=输入错误，3=存在未知协议�
 | LOD-04 | lodgement（proposal） | 已固化 fixtures + automated semantic tests（纯函数不持有 IO/timer） | 消费端发现时机/轮询/推送/性能，not-tested |
 | LOD-05..07 | lodgement + discovery | 已固化 fixtures + automated semantic tests（[lodgement fixtures](fixtures/lodgement.json)） | 多来源选择、来源认证、Lodgement 仅作候选全集的真实运行时证据，not-tested |
 | LOD-08..09 | lodgement（proposal） | 已固化 fixtures + automated semantic tests（[lodgement fixtures](fixtures/lodgement.json)） | 真实软删除事务、崩溃恢复/清理重试、来源认证与跨进程权限，not-tested |
+| COEX-01..03 | [coexistence](../docs/proposals/coexistence.md)（proposal，无 schema） | 无可离线判定结构：单例区分粒度与重复启动收敛属运行时行为 | 两个不同实例同时运行互不干扰、同实例重复启动收敛、不夺焦另一实例：not-tested |
+| COEX-04..05 | coexistence（proposal，无 schema） | 无 fixtures：子进程生命周期绑定与归属判定属运行时行为 | owner 强制终止后子进程与独占句柄释放、按共享 OS 属性批量终止的防护：not-tested |
+| COEX-06..09 | coexistence（proposal，无 schema） | 无 fixtures：主机状态位置与自恢复属运行时行为 | 主机共享位置不承载实例状态、共享位置仅删自有条目、陈旧锁自恢复、共享命名空间冲突处理：not-tested |
+| COEX-10 | coexistence（proposal，无 schema） | 无 fixtures：证据诚实性由评审与实现自证 | 实测证据（OS/revision/命令/退出码/未覆盖项）是否齐备：not-tested |
 | 跨语言 schema | 全部 12 份 schema | [Ajv/CLI tests](../tests/schema-cli.test.mjs) | 非 JS 独立实现尚无证据 |
 
 ## 运行与提交证据

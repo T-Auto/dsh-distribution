@@ -11,6 +11,9 @@
 | DIST-005 | [Lifecycle Observation](lifecycle.md) | lifecycle | [observation](../../packages/lifecycle/schema/observation.schema.json) |
 | DIST-006 | [Portability](portability.md) | portability | [plan](../../packages/portability/schema/plan.schema.json) |
 | DIST-007 | [Enumerable Lodgement](lodgement.md) | lodgement | [lodgement](../../packages/lodgement/schema/lodgement.schema.json) / [entry](../../packages/lodgement/schema/entry.schema.json) |
+| DIST-008 | [Host Coexistence](coexistence.md) | — | — |
+
+DIST-008 只包含运行时行为义务，不新增协议坐标，因此没有包与 schema；它的条款属于一致性分层第三层（implementation evidence），证据要求见 [conformance](../../conformance/README.md)。
 
 公共格式是有限、无环 JSON。每个 object 的字段默认封闭；新增私有语义通过 namespaced 协议声明，不通过任意顶层字段。JSON Schema 2020-12 只承担结构约束，提案和语义校验器共同定义完整 conformance。未知字段失败不等于拒绝未知协议：后者的 `spec` 是可保留的任意 JSON。
 

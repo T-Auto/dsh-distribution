@@ -72,3 +72,5 @@ npm 包版本不参与 wire 判断。来源 URI 不等于内容摘要；两个�
 描述符是不可信数据。Catalog 是调用方信任的代码，未信任的 schema/definition 不能通过远程描述符自动加载。Descriptor MAY 被缓存，但 Manager 自行验证来源、签名、完整性、权限和 freshness。
 
 公开 schema 标识使用 GitHub URL 作为名称，并非可用的远程 schema 服务。校验离线完成，不自动解引用 `$id` 或 component URI。声明 exclusive 只是声明管理归属，不是 OS 安全隔离证明。
+
+同一台主机上并存多个环境时，**运行时**之间同样需要边界：单例仲裁必须区分到环境实例、子进程必须绑定 owner 生命周期、停止进程必须依据独占可证明的资源。这些是行为义务而非可声明的格式，见 [DIST-008 Host Coexistence](proposals/coexistence.md)。
