@@ -1,8 +1,24 @@
 # 架构与职责边界
 
-Status: Draft。本文是 informative 架构说明；规范性约束见[提案索引](proposals/README.zh.md)。
+状态：**草案**（2026-09-20）。本文是 informative 架构说明；规范性约束见[提案索引](proposals/README.zh.md)。
 
 整合包作者先看[环境接入指南](getting-started.md)，不需要先理解本文的分层。对外，dsh-distribution 是统一描述和管理一整套环境的协议；对内，各模块保留独立的职责与坐标。接入工具负责调查环境并映射适用信息，不把内部模块转成作者的“基础＋扩展”选择菜单，也不因为整体介绍而虚报尚未实现的能力。
+
+## 0. 术语
+
+本文与各提案共用以下术语。这里给的是**非规范性**说明；条款的规范性定义以对应提案为准，冲突时以提案为准。
+
+| 术语 | 含义 | 出处 |
+| --- | --- | --- |
+| **发行物（distribution）** | 逻辑上的一套环境配置；不要求具有某个文件名、目录、进程、格式或本地安装 | [DSH 环境身份与声明](proposals/core.zh.md) CORE-01 |
+| **环境实例（environment instance）** | 发行物在某台主机上的一次受管物化；有自己的 `instanceId`，与发行物身份是两件事 | [发现与环境实例](proposals/discovery.zh.md) DISC-02 |
+| **描述符（descriptor）** | 发行物对外说明自己的文档（固定坐标 + `distribution{id,version}` + `protocols[]`）；**声明不是权限，也不是隔离证明** | CORE-01..05 |
+| **协议坐标（coordinate）** | `apiVersion` + `kind`；wire 语义的身份。破坏性 wire 变化 MUST 另起新坐标，而不是改版本号 | CORE-04、[版本与兼容性](compatibility.md) |
+| **definition** | 调用方本地信任的校验实现；catalog 里有 definition ≠ 运行时支持 ≠ 已授权 | CORE-06..09 |
+| **Manager** | 创建、记录、发现、启动或迁移环境实例的实现（管理器/启动器）。本协议不任命唯一 Manager | DISC-01、[实现范例](proposals/README.zh.md) |
+| **Lodgement** | 可枚举的共享共识入口；是**候选来源**，不是唯一事实源，也不是中央注册表 | [可枚举共识入口](proposals/lodgement.zh.md) LOD-01 |
+| **可迁移性（portability）** | 作者对某资源"能否被复制"的**声明**；声明不是授权，复制许可另行判定 | [受管存储归属](proposals/layout.zh.md) LAYOUT-06 |
+| **conformance 三层** | 结构（JSON Schema）/ 语义（跨字段、图、状态边）/ 实现证据（真实 IO、认证、事务） | [一致性矩阵](../conformance/README.md) |
 
 ## 1. 正交而非强制堆叠
 

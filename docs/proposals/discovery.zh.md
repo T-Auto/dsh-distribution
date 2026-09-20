@@ -8,11 +8,16 @@
 
 > 本文的规范词 MUST / MUST NOT / SHOULD / SHOULD NOT / MAY 采用 RFC 2119 / RFC 8174 含义，中文「必须/禁止/应/不应/可以」分别等价。本文记录的是**提案状态**（草案）；该协议的**发布状态**（Draft / Experimental / Candidate / Stable / Deprecated）与晋级条件另见[版本与兼容性](../compatibility.md)，两者是不同的事实。
 
+## 术语
+
+## 错误码
+
+本文条款会发出以下错误码；它们是稳定契约，实现与消费端 SHOULD 依赖 `code` 而非解析 `message`，完整注册表（含各码的层与出处）见[一致性矩阵的错误码注册表](../../conformance/README.md#error-code-registry)。本文不复制该表。
 
 
+本文只定义本协议**新增**的术语：provider, resolution, 环境实例。其余通用术语（发行物、环境实例、描述符、协议坐标、definition、Manager、conformance 三层、可迁移性）见[架构文档的术语表](../architecture.md#0-术语)，本文不重复定义。
 
-
-
+以下条款中的「MUST」「MUST NOT」等规范词含义见本文首屏说明。
 
 ## 协议声明
 
