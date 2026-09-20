@@ -16,3 +16,12 @@ artifacts/
 
 # Local run artifacts
 /test-output/
+
+# local branch folders
+dev-*
+exp-*
+fix-*
+pr-*
+release-*
+test
+backup
