@@ -104,6 +104,22 @@ CLI：退出 0=完整通过，1=无效，2=输入错误，3=存在未知协议�
 | COEX-10 | coexistence（proposal，无 schema） | 无 fixtures：证据诚实性由评审与实现自证 | 实测证据（OS/revision/命令/退出码/未覆盖项）是否齐备：not-tested |
 | 跨语言 schema | 全部 14 份 schema | [Ajv/CLI tests](../tests/schema-cli.test.mjs) | 非 JS 独立实现尚无证据 |
 
+### 范例实现的覆盖（informative）
+
+外部范例实现可以给某些坐标提供**实现证据**。这类证据不在本仓库、不由本仓库测试产生，只作为"协议可被真实产品采用"的旁证；本仓库不认证它，也不把它当作 Candidate/Stable 晋级依据。
+
+| 坐标 | 已知范例实现所声明的面 | 本仓库侧的处理 |
+| --- | --- | --- |
+| 身份与声明（`DistributionDescriptor`） | 有：描述符本体被生成并落盘 | 结构由本仓库 schema 校验；发布者所有权与不可变性仍 not-tested |
+| 受管存储归属（`ManagedLayout`） | 有：两个独占资源声明（`exclusive` + `conditional`） | LAYOUT-02 的正则由 schema 与语义校验器共同保证；真实路径 containment 仍 not-tested |
+| 发现与环境实例（`EnvironmentDiscovery` + `EnvironmentInstance`） | 有：描述符声明 `references`，运行期写入实例记录并校验 instanceId 唯一 | DISC-03 的"持久登记拒绝重复"在范例内成立，但不是全局唯一 registry 的证据 |
+| 环境组成声明（`EnvironmentComposition`） | **无** | COMP-01..04 的实现行为无法评估 |
+| 环境生命周期观察（`EnvironmentLifecycle`） | **无** | LIFE-01..04 的实现行为无法评估 |
+| 可迁移性计划与恢复日志（`EnvironmentPortability`） | **无** | PORT-01..10 的实现行为无法评估 |
+| 可枚举共识入口（`Lodgement`） | **无** | LOD-01..09 的实现行为无法评估 |
+
+结论：本协议目前有**三面**存在实现证据，**四面**只有静态 conformance。任何"协议已完整实现"的说法都超出证据范围。
+
 ## 运行与提交证据
 
 ```sh
