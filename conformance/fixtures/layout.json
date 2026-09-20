@@ -1,0 +1,102 @@
+[
+  {
+    "id": "portable-relative-and-uri",
+    "schema": "layout/layout",
+    "validate": "validateLayout",
+    "valid": true,
+    "document": {
+      "resources": [
+        { "id": "config", "role": "config", "location": { "type": "relative-path", "value": "./config" }, "ownership": "exclusive", "portability": "portable", "sensitivity": "public" },
+        { "id": "models", "role": "example.org:models", "location": { "type": "uri", "value": "s3://bucket/prefix/" }, "ownership": "shared", "portability": "conditional", "sensitivity": "private" },
+        { "id": "creds", "role": "secrets", "location": { "type": "relative-path", "value": "./secrets" }, "ownership": "exclusive", "portability": "nonportable", "sensitivity": "secret" }
+      ]
+    }
+  },
+  {
+    "id": "empty-resources",
+    "schema": "layout/layout",
+    "validate": "validateLayout",
+    "valid": true,
+    "document": { "resources": [] }
+  },
+  {
+    "id": "path-parent-escape",
+    "schema": "layout/layout",
+    "validate": "validateLayout",
+    "valid": false,
+    "code": "SCHEMA_INVALID",
+    "document": { "resources": [{ "id": "c", "role": "config", "location": { "type": "relative-path", "value": "../escape" }, "ownership": "exclusive", "portability": "portable", "sensitivity": "public" }] },
+    "note": "LAYOUT-02：判别联合让该规则进入生成的 JSON Schema，只读 schema 的实现同样拒绝"
+  },
+  {
+    "id": "path-dot-segment",
+    "schema": "layout/layout",
+    "validate": "validateLayout",
+    "valid": false,
+    "code": "SCHEMA_INVALID",
+    "document": { "resources": [{ "id": "c", "role": "config", "location": { "type": "relative-path", "value": "./a/../b" }, "ownership": "exclusive", "portability": "portable", "sensitivity": "public" }] }
+  },
+  {
+    "id": "path-backslash",
+    "schema": "layout/layout",
+    "validate": "validateLayout",
+    "valid": false,
+    "code": "SCHEMA_INVALID",
+    "document": { "resources": [{ "id": "c", "role": "config", "location": { "type": "relative-path", "value": "./a\\b" }, "ownership": "exclusive", "portability": "portable", "sensitivity": "public" }] }
+  },
+  {
+    "id": "path-windows-device-name",
+    "schema": "layout/layout",
+    "validate": "validateLayout",
+    "valid": false,
+    "code": "UNSAFE_PATH",
+    "document": { "resources": [{ "id": "c", "role": "config", "location": { "type": "relative-path", "value": "./CON" }, "ownership": "exclusive", "portability": "portable", "sensitivity": "public" }] },
+    "note": "补充词法规则：JSON Schema 表达不了平台保留名，由语义校验器承担（已声明的分层差异）"
+  },
+  {
+    "id": "path-trailing-dot",
+    "schema": "layout/layout",
+    "validate": "validateLayout",
+    "valid": false,
+    "code": "UNSAFE_PATH",
+    "document": { "resources": [{ "id": "c", "role": "config", "location": { "type": "relative-path", "value": "./a." }, "ownership": "exclusive", "portability": "portable", "sensitivity": "public" }] },
+    "note": "同上：语义层补充规则"
+  },
+  {
+    "id": "uri-without-scheme",
+    "schema": "layout/layout",
+    "validate": "validateLayout",
+    "valid": false,
+    "code": "SCHEMA_INVALID",
+    "document": { "resources": [{ "id": "c", "role": "config", "location": { "type": "uri", "value": "no-scheme" }, "ownership": "exclusive", "portability": "portable", "sensitivity": "public" }] }
+  },
+  {
+    "id": "ownership-external-without-portability",
+    "schema": "layout/layout",
+    "validate": "validateLayout",
+    "valid": false,
+    "code": "OWNERSHIP_CONFLICT",
+    "document": { "resources": [{ "id": "c", "role": "config", "location": { "type": "relative-path", "value": "./config" }, "ownership": "external", "portability": "portable", "sensitivity": "public" }] }
+  },
+  {
+    "id": "secrets-role-not-secret",
+    "schema": "layout/layout",
+    "validate": "validateLayout",
+    "valid": false,
+    "code": "SENSITIVITY_CONFLICT",
+    "document": { "resources": [{ "id": "c", "role": "secrets", "location": { "type": "relative-path", "value": "./secrets" }, "ownership": "exclusive", "portability": "portable", "sensitivity": "public" }] }
+  },
+  {
+    "id": "duplicate-resource-id",
+    "schema": "layout/layout",
+    "validate": "validateLayout",
+    "valid": false,
+    "code": "DUPLICATE",
+    "document": {
+      "resources": [
+        { "id": "c", "role": "config", "location": { "type": "relative-path", "value": "./config" }, "ownership": "exclusive", "portability": "portable", "sensitivity": "public" },
+        { "id": "c", "role": "data", "location": { "type": "relative-path", "value": "./data" }, "ownership": "exclusive", "portability": "portable", "sensitivity": "private" }
+      ]
+    }
+  }
+]

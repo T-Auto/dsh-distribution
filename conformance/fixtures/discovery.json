@@ -1,0 +1,127 @@
+[
+  {
+    "id": "discovery-references",
+    "schema": "discovery/discovery",
+    "validate": "definitionEnvironmentDiscovery",
+    "valid": true,
+    "document": { "references": ["urn:test:descriptor:1"] },
+    "note": "发现提示，不是强制唯一入口"
+  },
+  {
+    "id": "instance-record",
+    "schema": "discovery/instance",
+    "validate": "validateInstance",
+    "valid": true,
+    "document": {
+      "apiVersion": "distribution.dsh.dev/v1alpha1",
+      "kind": "EnvironmentInstance",
+      "instanceId": "urn:test:instance:1",
+      "distribution": { "id": "urn:test:dist:a", "version": "1" },
+      "descriptorRef": "urn:test:descriptor:1",
+      "revision": 0
+    }
+  },
+  {
+    "id": "relative-instance-id",
+    "schema": "discovery/instance",
+    "validate": "validateInstance",
+    "valid": false,
+    "code": "SCHEMA_INVALID",
+    "document": {
+      "apiVersion": "distribution.dsh.dev/v1alpha1",
+      "kind": "EnvironmentInstance",
+      "instanceId": "instance-1",
+      "distribution": { "id": "urn:test:dist:a", "version": "1" },
+      "descriptorRef": "urn:test:descriptor:1",
+      "revision": 0
+    },
+    "note": "DISC-02：instanceId MUST 为 URI"
+  },
+  {
+    "id": "negative-revision",
+    "schema": "discovery/instance",
+    "validate": "validateInstance",
+    "valid": false,
+    "code": "SCHEMA_INVALID",
+    "document": {
+      "apiVersion": "distribution.dsh.dev/v1alpha1",
+      "kind": "EnvironmentInstance",
+      "instanceId": "urn:test:instance:1",
+      "distribution": { "id": "urn:test:dist:a", "version": "1" },
+      "descriptorRef": "urn:test:descriptor:1",
+      "revision": -1
+    }
+  },
+  {
+    "id": "resolution-bound-instance",
+    "schema": "discovery/resolution",
+    "validate": "validateResolution",
+    "valid": true,
+    "document": {
+      "reference": "urn:test:descriptor:1",
+      "descriptor": {
+        "apiVersion": "distribution.dsh.dev/v1alpha1",
+        "kind": "DistributionDescriptor",
+        "distribution": { "id": "urn:test:dist:a", "version": "1" },
+        "protocols": []
+      },
+      "instance": {
+        "apiVersion": "distribution.dsh.dev/v1alpha1",
+        "kind": "EnvironmentInstance",
+        "instanceId": "urn:test:instance:1",
+        "distribution": { "id": "urn:test:dist:a", "version": "1" },
+        "descriptorRef": "urn:test:descriptor:1",
+        "revision": 0
+      }
+    }
+  },
+  {
+    "id": "resolution-reference-mismatch",
+    "schema": "discovery/resolution",
+    "validate": "validateResolution",
+    "valid": false,
+    "code": "IDENTITY_MISMATCH",
+    "document": {
+      "reference": "urn:test:descriptor:1",
+      "descriptor": {
+        "apiVersion": "distribution.dsh.dev/v1alpha1",
+        "kind": "DistributionDescriptor",
+        "distribution": { "id": "urn:test:dist:a", "version": "1" },
+        "protocols": []
+      },
+      "instance": {
+        "apiVersion": "distribution.dsh.dev/v1alpha1",
+        "kind": "EnvironmentInstance",
+        "instanceId": "urn:test:instance:1",
+        "distribution": { "id": "urn:test:dist:a", "version": "1" },
+        "descriptorRef": "urn:test:descriptor:other",
+        "revision": 0
+      }
+    },
+    "note": "DISC-03：实例的 descriptorRef 必须等于 resolution.reference（离线可判定，报 IDENTITY_MISMATCH）；REFERENCE_MISMATCH 是客户端在 provider 返回不同 reference 时的运行反馈，由 tests/discovery.test.mjs 覆盖"
+  },
+  {
+    "id": "resolution-identity-mismatch",
+    "schema": "discovery/resolution",
+    "validate": "validateResolution",
+    "valid": false,
+    "code": "IDENTITY_MISMATCH",
+    "document": {
+      "reference": "urn:test:descriptor:1",
+      "descriptor": {
+        "apiVersion": "distribution.dsh.dev/v1alpha1",
+        "kind": "DistributionDescriptor",
+        "distribution": { "id": "urn:test:dist:a", "version": "1" },
+        "protocols": []
+      },
+      "instance": {
+        "apiVersion": "distribution.dsh.dev/v1alpha1",
+        "kind": "EnvironmentInstance",
+        "instanceId": "urn:test:instance:1",
+        "distribution": { "id": "urn:test:dist:a", "version": "2" },
+        "descriptorRef": "urn:test:descriptor:1",
+        "revision": 0
+      }
+    }
+  }
+]

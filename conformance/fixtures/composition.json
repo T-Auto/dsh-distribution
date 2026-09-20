@@ -1,0 +1,69 @@
+[
+  {
+    "id": "dag-accepted",
+    "schema": "composition/composition",
+    "validate": "validateComposition",
+    "valid": true,
+    "document": {
+      "components": [
+        { "id": "a", "ref": "pkg:npm/example@1" },
+        { "id": "b", "ref": "oci://example/b", "dependsOn": ["a"] },
+        { "id": "c", "ref": "https://example.test/c.tgz", "contracts": [{ "apiVersion": "layout.distribution.dsh.dev/v1alpha1", "kind": "ManagedLayout" }] }
+      ]
+    }
+  },
+  {
+    "id": "empty-composition",
+    "schema": "composition/composition",
+    "validate": "validateComposition",
+    "valid": true,
+    "document": { "components": [] },
+    "note": "环境不要求由组件组成；空组合合法"
+  },
+  {
+    "id": "duplicate-component-id",
+    "schema": "composition/composition",
+    "validate": "validateComposition",
+    "valid": false,
+    "code": "DUPLICATE",
+    "document": { "components": [{ "id": "a", "ref": "urn:a" }, { "id": "a", "ref": "urn:b" }] }
+  },
+  {
+    "id": "dangling-dependency",
+    "schema": "composition/composition",
+    "validate": "validateComposition",
+    "valid": false,
+    "code": "INVALID_REFERENCE",
+    "document": { "components": [{ "id": "a", "ref": "urn:a", "dependsOn": ["b"] }] }
+  },
+  {
+    "id": "self-dependency",
+    "schema": "composition/composition",
+    "validate": "validateComposition",
+    "valid": false,
+    "code": "INVALID_REFERENCE",
+    "document": { "components": [{ "id": "a", "ref": "urn:a", "dependsOn": ["a"] }] }
+  },
+  {
+    "id": "cycle",
+    "schema": "composition/composition",
+    "validate": "validateComposition",
+    "valid": false,
+    "code": "COMPOSITION_CYCLE",
+    "document": {
+      "components": [
+        { "id": "a", "ref": "urn:a", "dependsOn": ["b"] },
+        { "id": "b", "ref": "urn:b", "dependsOn": ["a"] }
+      ]
+    }
+  },
+  {
+    "id": "relative-component-ref",
+    "schema": "composition/composition",
+    "validate": "validateComposition",
+    "valid": false,
+    "code": "SCHEMA_INVALID",
+    "document": { "components": [{ "id": "a", "ref": "./local/path" }] },
+    "note": "ref 必须是绝对 URI 形状的 opaque 引用"
+  }
+]

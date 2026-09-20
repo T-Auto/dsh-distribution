@@ -1,0 +1,69 @@
+[
+  {
+    "id": "lifecycle-states",
+    "schema": "lifecycle/lifecycle",
+    "validate": "definitionEnvironmentLifecycle",
+    "valid": true,
+    "document": { "states": ["declared", "installed", "available", "active", "inactive", "broken", "migrating"] }
+  },
+  {
+    "id": "lifecycle-subset",
+    "schema": "lifecycle/lifecycle",
+    "validate": "definitionEnvironmentLifecycle",
+    "valid": true,
+    "document": { "states": ["declared", "active"] },
+    "note": "实现 MAY 只暴露有意义的状态"
+  },
+  {
+    "id": "empty-states",
+    "schema": "lifecycle/lifecycle",
+    "validate": "definitionEnvironmentLifecycle",
+    "valid": false,
+    "code": "INVALID_STATES",
+    "document": { "states": [] }
+  },
+  {
+    "id": "duplicate-states",
+    "schema": "lifecycle/lifecycle",
+    "validate": "definitionEnvironmentLifecycle",
+    "valid": false,
+    "code": "INVALID_STATES",
+    "document": { "states": ["active", "active"] }
+  },
+  {
+    "id": "unknown-state",
+    "schema": "lifecycle/lifecycle",
+    "validate": "definitionEnvironmentLifecycle",
+    "valid": false,
+    "code": "SCHEMA_INVALID",
+    "document": { "states": ["activated"] },
+    "note": "LIFE-01：词表外的取值不是本协议的词汇"
+  },
+  {
+    "id": "observation",
+    "schema": "lifecycle/observation",
+    "validate": "validateObservation",
+    "valid": true,
+    "document": {
+      "apiVersion": "lifecycle.distribution.dsh.dev/v1alpha1",
+      "kind": "EnvironmentObservation",
+      "instanceId": "urn:test:instance:1",
+      "revision": 3,
+      "state": "active"
+    }
+  },
+  {
+    "id": "observation-relative-instance",
+    "schema": "lifecycle/observation",
+    "validate": "validateObservation",
+    "valid": false,
+    "code": "SCHEMA_INVALID",
+    "document": {
+      "apiVersion": "lifecycle.distribution.dsh.dev/v1alpha1",
+      "kind": "EnvironmentObservation",
+      "instanceId": "instance-1",
+      "revision": 3,
+      "state": "active"
+    }
+  }
+]

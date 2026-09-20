@@ -19,7 +19,23 @@ CLI：退出 0=完整通过，1=无效，2=输入错误，3=存在未知协议�
 - **schema 表达不了的补充词法规则**：如 Windows device name、尾点等平台别名（`UNSAFE_PATH`）。JSON Schema 无法表达"不区分大小写的保留名集合"，这类规则只能由语义校验器承担。
 - **跨字段规则**：如 digest 的算法↔十六进制长度对应（`INVALID_DIGEST`）。JSON Schema 的 `pattern` 只能约束语法形状。
 
-除这两类外，任何"schema 放行、校验器拒绝"或反过来的差异都是缺陷：只读 schema 的独立实现会与参考实现不一致。
+除这两类外，任何"schema 放行、校验器拒绝"或反过来的差异都是缺陷：只读 schema 的独立实现会与参考实现不一致。这条纪律由 [conformance 测试](../tests/conformance.test.mjs) 钉住：它读取每个 fixture、按名称调用真实校验器，并对已声明的差异用例断言"结构接受但语义拒绝"仍然成立。
+
+## Fixture 体例
+
+`conformance/fixtures/*.json` 是**可被其他语言加载**的一致性向量。每个向量：
+
+| 字段 | 必填 | 含义 |
+| --- | --- | --- |
+| `id` | ✅ | 向量名，用于引用 |
+| `schema` | ✅ | 结构来源，取 `scripts/schemas.mjs` 的键（如 `layout/layout`） |
+| `validate` | ✅ | 语义校验器名（如 `validateLayout`、`definitionEnvironmentPortability`），由测试按名解析为真实实现 |
+| `valid` | ✅ | 期望的整体结论（结构 + 语义） |
+| `document` | ✅ | 被校验的 JSON 文档 |
+| `code` | 拒绝时 | 期望出现的错误码（见上方注册表） |
+| `note` | 可选 | 该向量为何存在、对应哪条条款 |
+
+`descriptors.json` 与 `lodgement.json` 早于本约定，保留原样并由各自的专用测试消费（[core tests](../tests/core.test.mjs)、[lodgement tests](../tests/lodgement.test.mjs)）；其余 fixture 必须写明 `schema` 与 `validate`，新增向量时不得只写散文说明。
 
 **每条规范性条款必须有可指认的证据位置。** 提案正文给条款稳定 ID（`XXX-nn`），矩阵逐行指出它的 schema 来源、fixture 或自动化用例，以及**未覆盖的实现行为**。不能用"仓库测试全绿"代替运行时证据；需要执行器才能证明的条款一律标 not-tested（COEX-10 明确禁止这种推理）。
 
@@ -77,21 +93,21 @@ CLI：退出 0=完整通过，1=无效，2=输入错误，3=存在未知协议�
 | CORE-01..04 | core/descriptor | [JSON fixtures](fixtures/descriptors.json)、[core tests](../tests/core.test.mjs) | 发布者 ID 所有权、release immutability |
 | CORE-05 | descriptor + discovery | 最小 descriptor、memory discovery 示例 | 部署可发现性，not-tested |
 | CORE-06..09 | core catalog/assessment | 私有坐标、required、optional、重复、抛错、support 测试（含 `INVALID_SUPPORT`） | 可信插件加载 policy，not-tested |
-| COMP-01..03 | composition | [domain tests](../tests/domains.test.mjs)：DAG、重复、悬空、自环、环 | 来源 URI 的内容真实性 |
+| COMP-01..03 | composition | [composition fixtures](fixtures/composition.json)（DAG、空组合、重复、悬空、自环、环）+ [domain tests](../tests/domains.test.mjs) | 来源 URI 的内容真实性 |
 | COMP-04 | 无 IO validator | component ref 校验不解析代码 | 下载授权/完整性，not-tested |
-| LAYOUT-01..04 | layout | [domain tests](../tests/domains.test.mjs)：16 条路径攻击（含 `../escape`、`./a//b`、`./CON`、`./a.`、NUL/换行）、归属、敏感性、唯一性 | 物理资源归属 |
+| LAYOUT-01..04 | layout | [layout fixtures](fixtures/layout.json)（10 例：相对/URI 合法、`../escape`、`./a/../b`、`./a\b`、`./CON`、`./a.`、无 scheme URI、归属/敏感性/唯一性冲突）+ [domain tests](../tests/domains.test.mjs) 的 16 条路径攻击 | 物理资源归属 |
 | LAYOUT-02（schema 侧） | layout（`location` 判别联合） | [schema tests](../tests/schema-cli.test.mjs) 的 Ajv 对照 + `oneOf` 结构 | — |
 | LAYOUT-02（语义侧） | layout validator | `UNSAFE_PATH`：平台保留名与尾点，**schema 表达不了**（已声明差异） | 平台别名语义的真实文件系统行为，not-tested |
 | LAYOUT-05..06 | layout + portability | 不复制非独占；conditional 默认阻断 | realpath/ACL/alias/审批真实性，not-tested |
-| DISC-01..03 | discovery/instance/resolution | [discovery tests](../tests/discovery.test.mjs)：多实例、绑定、不同 ref、detached snapshot | 持久全局唯一 registry，not-tested |
-| DISC-04 | discovery wrapper | not-found/error/invalid/`INVALID_TIMEOUT`/abort/迟到结果 | 非协作 provider 的 IO 终止 |
+| DISC-01..03 | discovery/instance/resolution | [discovery fixtures](fixtures/discovery.json)（references、实例记录、相对 instanceId、负 revision、绑定/不匹配 resolution）+ [discovery tests](../tests/discovery.test.mjs) | 持久全局唯一 registry，not-tested |
+| DISC-04 | discovery wrapper | not-found/error/invalid/`INVALID_TIMEOUT`/abort/迟到结果（[discovery tests](../tests/discovery.test.mjs)） | 非协作 provider 的 IO 终止 |
 | DISC-05 | discovery client | 有界 timeout、AbortSignal、迟到结果丢弃、timer/listener 清理 | 忽略 signal 的工作无法被强制终止，not-tested |
 | DISC-06 | 无自动 resolver | memory provider 示例 | SSRF/认证/redirect policy，not-tested |
-| LIFE-01..03 | lifecycle | `INVALID_STATES`、revision、跨实例 `IDENTITY_MISMATCH`、跳跃观察 | 真实进程状态 |
+| LIFE-01..03 | lifecycle | [lifecycle fixtures](fixtures/lifecycle.json)（完整/子集/空/重复/词表外 states、observation、相对 instanceId）+ [domain tests](../tests/domains.test.mjs) | 真实进程状态 |
 | LIFE-04 | observation model | 单条记录验证 | descriptor 状态子集绑定与来源认证，not-tested |
-| PORT-01..02 | portability/request | `INVALID_MODES`、身份 `IDENTITY_CONFLICT`、`INVALID_APPROVAL`、plan tests | descriptor 模式绑定、源 revision 真实性，not-tested |
+| PORT-01..02 | portability/request | [portability fixtures](fixtures/portability.json)（modes 合法/子集/空/重复/词表外、request 合法、相对 planId、同源目标、重复审批）+ [domain tests](../tests/domains.test.mjs) | descriptor 模式绑定、源 revision 真实性，not-tested |
 | PORT-03..05 | portability/plan | 默认动作、secret、conditional、重叠（含大小写折叠）、伪造 readiness/reason | 真实路径 alias、外来计划与实际 layout 绑定 |
-| PORT-06..07 | portability/journal | 全状态对矩阵、失败回滚/重试、`REVISION_CONFLICT`/溢出、`INVALID_TRANSITION` | 持久原子 CAS，not-tested |
+| PORT-06..07 | portability/journal | [portability fixtures](fixtures/portability.json)（journal 合法/词表外 state）+ 全状态对矩阵、失败回滚/重试、`REVISION_CONFLICT`/溢出、`INVALID_TRANSITION`（[domain tests](../tests/domains.test.mjs)） | 持久原子 CAS，not-tested |
 | PORT-08..10 | 执行器 obligation | 无执行器；明确 not-tested | 全部实际迁移/校验/崩溃恢复/源退役 |
 | LOD-01..02 | lodgement + entry（JSON Schema 2020-12） | [lodgement fixtures](fixtures/lodgement.json)：published / removed | 真实载体位置，not-tested |
 | LOD-03 | lodgement（proposal）+ `digestSchema`/`digestIssue` | [lodgement fixtures](fixtures/lodgement.json)：`digest-wrong-length`（`INVALID_DIGEST`）+ 长度/算法用例；语法由 schema，算法↔长度由语义（已声明差异） | 摘要是否真的对内容可复现（需要真实字节），not-tested |

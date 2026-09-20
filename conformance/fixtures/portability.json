@@ -1,0 +1,134 @@
+[
+  {
+    "id": "modes-all",
+    "schema": "portability/portability",
+    "validate": "definitionEnvironmentPortability",
+    "valid": true,
+    "document": { "modes": ["clone", "export", "migrate"] }
+  },
+  {
+    "id": "modes-subset",
+    "schema": "portability/portability",
+    "validate": "definitionEnvironmentPortability",
+    "valid": true,
+    "document": { "modes": ["clone"] },
+    "note": "PORT-01：实现只声明实际提供的模式"
+  },
+  {
+    "id": "modes-empty",
+    "schema": "portability/portability",
+    "validate": "definitionEnvironmentPortability",
+    "valid": false,
+    "code": "INVALID_MODES",
+    "document": { "modes": [] }
+  },
+  {
+    "id": "modes-duplicate",
+    "schema": "portability/portability",
+    "validate": "definitionEnvironmentPortability",
+    "valid": false,
+    "code": "DUPLICATE",
+    "document": { "modes": ["clone", "clone"] }
+  },
+  {
+    "id": "modes-unknown",
+    "schema": "portability/portability",
+    "validate": "definitionEnvironmentPortability",
+    "valid": false,
+    "code": "SCHEMA_INVALID",
+    "document": { "modes": ["activate"] },
+    "note": "词表外的取值不是本协议的词汇"
+  },
+  {
+    "id": "request",
+    "schema": "portability/request",
+    "validate": "validateRequest",
+    "valid": true,
+    "document": {
+      "planId": "urn:test:plan:1",
+      "mode": "clone",
+      "sourceInstanceId": "urn:test:instance:a",
+      "targetInstanceId": "urn:test:instance:b",
+      "sourceRevision": 4,
+      "approvedConditionalResources": ["state"],
+      "rollback": { "strategy": "discard-new-target", "reference": "urn:test:staging:b" }
+    }
+  },
+  {
+    "id": "request-relative-plan-id",
+    "schema": "portability/request",
+    "validate": "validateRequest",
+    "valid": false,
+    "code": "SCHEMA_INVALID",
+    "document": {
+      "planId": "plan-1",
+      "mode": "clone",
+      "sourceInstanceId": "urn:test:instance:a",
+      "targetInstanceId": "urn:test:instance:b",
+      "sourceRevision": 4,
+      "approvedConditionalResources": [],
+      "rollback": { "strategy": "discard-new-target", "reference": "urn:test:staging:b" }
+    }
+  },
+  {
+    "id": "request-same-source-and-target",
+    "schema": "portability/request",
+    "validate": "validateRequest",
+    "valid": false,
+    "code": "IDENTITY_CONFLICT",
+    "document": {
+      "planId": "urn:test:plan:1",
+      "mode": "migrate",
+      "sourceInstanceId": "urn:test:instance:a",
+      "targetInstanceId": "urn:test:instance:a",
+      "sourceRevision": 4,
+      "approvedConditionalResources": [],
+      "rollback": { "strategy": "restore-checkpoint", "reference": "urn:test:checkpoint:a" }
+    },
+    "note": "PORT-02：源与目标必须是不同实例身份"
+  },
+  {
+    "id": "request-duplicate-approval",
+    "schema": "portability/request",
+    "validate": "validateRequest",
+    "valid": false,
+    "code": "DUPLICATE",
+    "document": {
+      "planId": "urn:test:plan:1",
+      "mode": "clone",
+      "sourceInstanceId": "urn:test:instance:a",
+      "targetInstanceId": "urn:test:instance:b",
+      "sourceRevision": 4,
+      "approvedConditionalResources": ["state", "state"],
+      "rollback": { "strategy": "discard-new-target", "reference": "urn:test:staging:b" }
+    }
+  },
+  {
+    "id": "journal-planned",
+    "schema": "portability/journal",
+    "validate": "validateJournal",
+    "valid": true,
+    "document": {
+      "apiVersion": "portability.distribution.dsh.dev/v1alpha1",
+      "kind": "MigrationJournal",
+      "planId": "urn:test:plan:1",
+      "revision": 0,
+      "state": "planned"
+    }
+  },
+  {
+    "id": "journal-unknown-state",
+    "schema": "portability/journal",
+    "validate": "validateJournal",
+    "valid": false,
+    "code": "SCHEMA_INVALID",
+    "document": {
+      "apiVersion": "portability.distribution.dsh.dev/v1alpha1",
+      "kind": "MigrationJournal",
+      "planId": "urn:test:plan:1",
+      "revision": 0,
+      "state": "started"
+    },
+    "note": "PORT-06：状态必须是显式状态机中的节点"
+  }
+]
