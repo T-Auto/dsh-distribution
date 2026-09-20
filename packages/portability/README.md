@@ -10,7 +10,7 @@ Main entry: `@dsh-distribution/portability`. Exported types are inferred from ty
 
 ## Contract and boundary
 
-[Specification / evidence](../../docs/proposals/portability.md). No copy/delete/credential transfer. A valid plan or journal is not execution evidence.
+[Specification / evidence](../../docs/proposals/portability.zh.md). No copy/delete/credential transfer. A valid plan or journal is not execution evidence.
 
 Schema files (where provided) use JSON Schema 2020-12 and cover structure only. Use semantic validators for full domain rules. Inputs must be bounded finite JSON; active JavaScript objects and untrusted definition code are outside the API threat model.
 

@@ -10,7 +10,7 @@ Main entry: `@dsh-distribution/core`. Exported types are inferred from typed sch
 
 ## Contract and boundary
 
-[Specification / evidence](../../docs/proposals/core.md). No IO; catalog knowledge is not support or authorization.
+[Specification / evidence](../../docs/proposals/core.zh.md). No IO; catalog knowledge is not support or authorization.
 
 Schema files (where provided) use JSON Schema 2020-12 and cover structure only. Use semantic validators for full domain rules. Inputs must be bounded finite JSON; active JavaScript objects and untrusted definition code are outside the API threat model.
 

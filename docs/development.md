@@ -12,7 +12,7 @@ pnpm check
 node packages/conformance/lib/cli.js examples/managed.json
 ```
 
-`pnpm check` 包含构建、测试、独立 Ajv schema 对照、CLI 测试、schema 漂移检查、文档链接/包边界检查和两个可运行示例。`pnpm check:pack` 在临时目录打包七个包并离线安装，检查脱离 workspace 的 ESM、类型、schema 和 CLI 产物。`pnpm schemas:write` 重新生成 JSON Schema，不要手改生成产物。
+`pnpm check` 包含构建、测试、独立 Ajv schema 对照、CLI 测试、schema 漂移检查、文档链接/包边界检查和两个可运行示例。`pnpm check:pack` 在临时目录打包八个包并离线安装，检查脱离 workspace 的 ESM、类型、schema 和 CLI 产物。`pnpm schemas:write` 重新生成 JSON Schema，不要手改生成产物。
 
 CLI 退出码：`0` 完整检查通过；`1` 已知 contract 无效；`2` 输入/用法错误；`3` 存在未检查的协议。`valid: true, complete: false` 不能宣称完整 conformance。检查结果不等于环境健康、来源可信或有权执行管理操作。
 
@@ -28,8 +28,9 @@ CLI 退出码：`0` 完整检查通过；`1` 已知 contract 无效；`2` 输入
 | `packages/discovery` | 安装实例记录、发现接口和示例 |
 | `packages/lifecycle` | 环境状态观察，不规定通用激活命令 |
 | `packages/portability` | 迁移计划和回滚日志，不执行真实迁移 |
-| `packages/conformance` | 聚合校验和只读 CLI；不是第七份领域协议 |
-| `docs/proposals` | 六份规范提案 |
+| `packages/lodgement` | 可枚举共识入口与条目模型，不实现真实载体或事务 |
+| `packages/conformance` | 聚合校验和只读 CLI；不是第八份领域协议 |
+| `docs/proposals` | 八份规范提案 |
 | `conformance` | fixtures、要求矩阵和证据边界 |
 | `registry` | 离线协议坐标索引，不是安装源 |
 | `adapters` | 非规范性的产品集成说明 |
@@ -67,7 +68,7 @@ Core 的 `required: true` 表示消费者接受描述符时必须理解并支持
 
 `createMigrationPlan` 是无 IO 的保守预览：secret 跳过；nonportable 跳过；shared/external 只引用；conditional 需要明确资源审批；已知路径重叠会阻断复制。`ready` 只表示元数据层没有 blocked 条目，不表示操作已授权或执行前提全部满足。
 
-执行方仍需真实路径 containment、符号链接/挂载点/URI alias 检查、SSRF 防护、来源认证、内容完整性验证、源 revision 锁定、目标 staging 与回滚证据。Journal 的成功转换不是实际复制/回滚成功证明。详见[迁移提案](proposals/portability.md)和[安全边界](../SECURITY.md)。
+执行方仍需真实路径 containment、符号链接/挂载点/URI alias 检查、SSRF 防护、来源认证、内容完整性验证、源 revision 锁定、目标 staging 与回滚证据。Journal 的成功转换不是实际复制/回滚成功证明。详见[迁移提案](proposals/portability.zh.md)和[安全边界](../SECURITY.md)。
 
 运行本仓库示例，不会启动真实环境或迁移文件：
 
@@ -100,4 +101,4 @@ const catalog = new ProtocolCatalog().register(definition);
 
 使用[共享 fixtures](../conformance/fixtures/descriptors.json)并移植 domain 测试输入；提交证据时区分结构、语义和真实执行三层覆盖，未实现的能力标明未验证。
 
-更多入口：[包索引](../packages/README.md) · [规范提案](proposals/README.md) · [一致性矩阵](../conformance/README.md) · [版本与兼容性](compatibility.md) · [贡献规则](../CONTRIBUTING.md)。
+更多入口：[包索引](../packages/README.md) · [规范提案](proposals/README.zh.md) · [一致性矩阵](../conformance/README.md) · [版本与兼容性](compatibility.md) · [贡献规则](../CONTRIBUTING.md)。

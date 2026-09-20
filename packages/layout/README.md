@@ -10,7 +10,7 @@ Main entry: `@dsh-distribution/layout`. Exported types are inferred from typed s
 
 ## Contract and boundary
 
-[Specification / evidence](../../docs/proposals/layout.md). Lexical path checks do not establish realpath containment or OS isolation.
+[Specification / evidence](../../docs/proposals/layout.zh.md). Lexical path checks do not establish realpath containment or OS isolation.
 
 Schema files (where provided) use JSON Schema 2020-12 and cover structure only. Use semantic validators for full domain rules. Inputs must be bounded finite JSON; active JavaScript objects and untrusted definition code are outside the API threat model.
 

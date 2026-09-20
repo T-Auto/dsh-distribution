@@ -1,8 +1,18 @@
-# DIST-006 — Portability Plans and Recovery Journal
+# 可迁移性计划与恢复日志
 
-Status: Draft
-Scope: transfer metadata and recovery bookkeeping; no transfer executor
-Coordinates: `portability.distribution.dsh.dev/v1alpha1` + `EnvironmentPortability`
+状态：**草案**（2026-09-20）
+
+范围：transfer metadata and recovery bookkeeping; no transfer executor
+
+协议坐标：`portability.distribution.dsh.dev/v1alpha1` + `EnvironmentPortability`
+
+> 本文的规范词 MUST / MUST NOT / SHOULD / SHOULD NOT / MAY 采用 RFC 2119 / RFC 8174 含义，中文「必须/禁止/应/不应/可以」分别等价。本文记录的是**提案状态**（草案）；该协议的**发布状态**（Draft / Experimental / Candidate / Stable / Deprecated）与晋级条件另见[版本与兼容性](../compatibility.md)，两者是不同的事实。
+
+
+
+
+
+
 
 ## 1. 采用与模式
 
@@ -12,7 +22,7 @@ Coordinates: `portability.distribution.dsh.dev/v1alpha1` + `EnvironmentPortabili
 - export：产生可供导入的逻辑目标内容；格式由实现决定。本 profile 同样为目标分配新实例 ID，重复导入需新计划/新目标 ID，避免克隆身份。
 - migrate：把工作环境转移到新实例；只有验证目标可用且授权明确后，执行器才可单独安排源退役。此协议不自动删除源。
 
-Portability 的声明本身不要求 layout；本仓库的 managed-resource transfer profile（`createMigrationPlan`）依赖 DIST-003。采用其他资源模型的实现可定义独立版本化计划协议，不需要修改 core。
+Portability 的声明本身不要求 layout；本仓库的 managed-resource transfer profile（`createMigrationPlan`）依赖[受管存储归属](layout.zh.md)。采用其他资源模型的实现可定义独立版本化计划协议，不需要修改 core。
 
 ## 2. MigrationRequest
 

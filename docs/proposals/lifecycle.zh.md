@@ -1,8 +1,18 @@
-# DIST-005 — Environment Lifecycle Observation
+# 环境生命周期观察
 
-Status: Draft
-Scope: externally observable environment management state
-Coordinates: `lifecycle.distribution.dsh.dev/v1alpha1` + `EnvironmentLifecycle`
+状态：**草案**（2026-09-20）
+
+范围：externally observable environment management state
+
+协议坐标：`lifecycle.distribution.dsh.dev/v1alpha1` + `EnvironmentLifecycle`
+
+> 本文的规范词 MUST / MUST NOT / SHOULD / SHOULD NOT / MAY 采用 RFC 2119 / RFC 8174 含义，中文「必须/禁止/应/不应/可以」分别等价。本文记录的是**提案状态**（草案）；该协议的**发布状态**（Draft / Experimental / Candidate / Stable / Deprecated）与晋级条件另见[版本与兼容性](../compatibility.md)，两者是不同的事实。
+
+
+
+
+
+
 
 ## 声明与状态
 

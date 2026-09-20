@@ -14,7 +14,7 @@
 https://github.com/T-Auto/dsh-distribution/blob/main/README.md
 https://github.com/T-Auto/dsh-distribution/blob/main/docs/getting-started.md
 https://github.com/T-Auto/dsh-distribution/blob/main/examples/managed.json
-https://github.com/T-Auto/dsh-distribution/blob/main/docs/proposals/README.md
+https://github.com/T-Auto/dsh-distribution/blob/main/docs/proposals/README.zh.md
 https://github.com/T-Auto/dsh-distribution/blob/main/SECURITY.md
 并继续阅读涉及字段的规范提案和 schema。
 

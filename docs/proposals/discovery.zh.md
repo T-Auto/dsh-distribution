@@ -1,8 +1,18 @@
-# DIST-004 — Discovery and Environment Instances
+# 发现与环境实例
 
-Status: Draft
-Scope: discovery results and instance identity, not a mandatory registry
-Coordinates: `discovery.distribution.dsh.dev/v1alpha1` + `EnvironmentDiscovery`
+状态：**草案**（2026-09-20）
+
+范围：discovery results and instance identity, not a mandatory registry
+
+协议坐标：`discovery.distribution.dsh.dev/v1alpha1` + `EnvironmentDiscovery`
+
+> 本文的规范词 MUST / MUST NOT / SHOULD / SHOULD NOT / MAY 采用 RFC 2119 / RFC 8174 含义，中文「必须/禁止/应/不应/可以」分别等价。本文记录的是**提案状态**（草案）；该协议的**发布状态**（Draft / Experimental / Candidate / Stable / Deprecated）与晋级条件另见[版本与兼容性](../compatibility.md)，两者是不同的事实。
+
+
+
+
+
+
 
 ## 协议声明
 

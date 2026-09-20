@@ -1,8 +1,18 @@
-# DIST-001 — Environment Identity and Declaration
+# DSH 环境身份与声明
 
-Status: Draft
-Scope: implementation-independent environment meta-protocol
-Coordinates: `distribution.dsh.dev/v1alpha1` + `DistributionDescriptor`
+状态：**草案**（2026-09-20）
+
+范围：implementation-independent environment meta-protocol
+
+协议坐标：`distribution.dsh.dev/v1alpha1` + `DistributionDescriptor`
+
+> 本文的规范词 MUST / MUST NOT / SHOULD / SHOULD NOT / MAY 采用 RFC 2119 / RFC 8174 含义，中文「必须/禁止/应/不应/可以」分别等价。本文记录的是**提案状态**（草案）；该协议的**发布状态**（Draft / Experimental / Candidate / Stable / Deprecated）与晋级条件另见[版本与兼容性](../compatibility.md)，两者是不同的事实。
+
+
+
+
+
+
 
 ## 1. 数据模型与规范性行为
 
@@ -10,7 +20,7 @@ Coordinates: `distribution.dsh.dev/v1alpha1` + `DistributionDescriptor`
 
 **CORE-02**：`id` MUST 是符合 schema 的绝对 URI 形状字符串；`version` MUST 是非空无空白 token。二者 MUST 精确比较；实现 MUST NOT 将版本解释为协议版本或擅自按 SemVer 升降级。URI 形状校验仅定义词法表达，不保证资源存在或某方案可用。若需要 URI canonicalization，由方案 profile 定义；默认不进行。
 
-**CORE-03**：同一发行物 MAY 有多个实例。实例身份 MUST NOT 写入此描述符；实例另见 DIST-004。发行物发布者 SHOULD 在同一 id/version 下保持描述内容不变；消费端仍需独立校验完整性和 freshness，不以此建议替代 digest。
+**CORE-03**：同一发行物 MAY 有多个实例。实例身份 MUST NOT 写入此描述符；实例另见[发现与环境实例](discovery.zh.md)。发行物发布者 SHOULD 在同一 id/version 下保持描述内容不变；消费端仍需独立校验完整性和 freshness，不以此建议替代 digest。
 
 **CORE-04**：每条协议声明 MUST 有 `apiVersion`、`kind`、`required: boolean` 和 JSON `spec`。apiVersion 语法为命名空间 `/v<positive major>[alpha|beta<positive revision>]`，kind 以大写字母开始，仅含 ASCII 字母数字。同一坐标 MUST NOT 重复。声明顺序不表示依赖优先级。
 
@@ -36,7 +46,7 @@ Conformance 聚合报告区分 valid 与 complete：未知协议可以结构有�
 
 ## 4. 生命周期、兼容与安全
 
-描述符本身无执行生命周期；动态实例观察另见 DIST-005。破坏性语义 MUST 使用新坐标；移除旧坐标前 SHOULD 有明确兼容窗口。对未知新版本 MUST NOT 静默降级。
+描述符本身无执行生命周期；动态实例观察另见[环境生命周期观察](lifecycle.zh.md)。破坏性语义 MUST 使用新坐标；移除旧坐标前 SHOULD 有明确兼容窗口。对未知新版本 MUST NOT 静默降级。
 
 Descriptor MUST 被当作数据；它不授予文件、网络或进程权限。调用方 MUST 限制输入尺寸/嵌套深度并处理恶意 JSON；参考 CLI 限制为 1 MiB，库 API 面向已受限的 JSON 数据。非 JSON 的 getter/proxy 等主动对象不属于 wire 输入，库不是执行这类对象的安全沙箱。
 

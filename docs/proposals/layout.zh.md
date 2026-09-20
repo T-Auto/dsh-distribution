@@ -1,8 +1,18 @@
-# DIST-003 — Managed Storage Roles
+# 受管存储归属
 
-Status: Draft
-Scope: logical storage ownership and portability labels
-Coordinates: `layout.distribution.dsh.dev/v1alpha1` + `ManagedLayout`
+状态：**草案**（2026-09-20）
+
+范围：logical storage ownership and portability labels
+
+协议坐标：`layout.distribution.dsh.dev/v1alpha1` + `ManagedLayout`
+
+> 本文的规范词 MUST / MUST NOT / SHOULD / SHOULD NOT / MAY 采用 RFC 2119 / RFC 8174 含义，中文「必须/禁止/应/不应/可以」分别等价。本文记录的是**提案状态**（草案）；该协议的**发布状态**（Draft / Experimental / Candidate / Stable / Deprecated）与晋级条件另见[版本与兼容性](../compatibility.md)，两者是不同的事实。
+
+
+
+
+
+
 
 ## 数据模型
 
@@ -10,7 +20,9 @@ Spec 是 `{ resources: [...] }`。每个资源声明：`id`、`role`、`location
 
 **LAYOUT-01**：role 为 `config/extensions/state/data/cache/logs/secrets`，或 namespaced `example.org:models` 形式。`extensions` 泛指可安装扩展内容，不限定插件，也不授权 Manager 增删该目录。
 
-**LAYOUT-02**：location.type 为 `relative-path` 或 `uri`。relative-path 是可移植词法子集：以 `./` 开头；每段以 ASCII 字母数字、下划线或连字符开头，后续可含点；不允许空段、反斜杠、percent 编码、点段、尾点、Windows device name。其精确正则及补充校验以 schema 和本条共同规定。非 ASCII、平台专属路径、对象存储或多个 root MAY 使用 URI profile；这不限制发行物实际目录布局。
+**LAYOUT-02**：location.type 为 `relative-path` 或 `uri`。relative-path 是可移植词法子集：以 `./` 开头；每段以 ASCII 字母数字、下划线或连字符开头，后续可含点；不允许空段、反斜杠、percent 编码、点段、尾点、Windows device name。非 ASCII、平台专属路径、对象存储或多个 root MAY 使用 URI profile；这不限制发行物实际目录布局。
+
+`location` MUST 被建模为按 `type` 判别的联合（discriminated union），而不是"单个对象 + 自由取值"：只有这样，`relative-path` 的精确正则才会进入生成的 JSON Schema，只读 schema 的独立实现才会拒绝 `../escape`、`/absolute`、`./a\b` 这类取值。**分层归属**：语法与结构（正则、`type` 取值）由 JSON Schema 承担；**平台保留名（`CON`/`PRN`/`AUX`/`NUL`/`COM1`…）与尾点**属于 JSON Schema 表达不了的补充词法规则，MUST 由语义校验器承担并报 `UNSAFE_PATH`。一致性矩阵逐行列出这两层；任何"schema 放行、校验器拒绝"的差异都必须在此声明，不得默认存在。
 
 relative-path 相对于 **Manager 绑定的实例管理 root**，不是进程 cwd 或远程 descriptor URI。未绑定 root 的消费者 MUST NOT 执行文件操作。URI 只检查方案形状，不在本协议中解引用。
 

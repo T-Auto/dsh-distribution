@@ -75,7 +75,7 @@
 
 接入工具、管理器或参与协议开发时，可以查阅：
 
-[开发指南](docs/development.md) · [架构](docs/architecture.md) · [规范提案](docs/proposals/README.md) · [包索引](packages/README.md) · [一致性测试](conformance/README.md) · [安全边界](SECURITY.md) · [兼容性](docs/compatibility.md) · [贡献规则](CONTRIBUTING.md)
+[开发指南](docs/development.md) · [架构](docs/architecture.md) · [规范提案](docs/proposals/README.zh.md) · [包索引](packages/README.md) · [一致性测试](conformance/README.md) · [安全边界](SECURITY.md) · [兼容性](docs/compatibility.md) · [贡献规则](CONTRIBUTING.md)
 
 ## License
 

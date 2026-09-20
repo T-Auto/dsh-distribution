@@ -10,7 +10,7 @@ Main entry: `@dsh-distribution/lifecycle`. Exported types are inferred from type
 
 ## Contract and boundary
 
-[Specification / evidence](../../docs/proposals/lifecycle.md). Observation revisions are local stream tokens, not a universal activation FSM or instance-record revision.
+[Specification / evidence](../../docs/proposals/lifecycle.zh.md). Observation revisions are local stream tokens, not a universal activation FSM or instance-record revision.
 
 Schema files (where provided) use JSON Schema 2020-12 and cover structure only. Use semantic validators for full domain rules. Inputs must be bounded finite JSON; active JavaScript objects and untrusted definition code are outside the API threat model.
 

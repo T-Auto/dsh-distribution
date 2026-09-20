@@ -10,7 +10,7 @@ Main entry: `@dsh-distribution/composition`. Exported types are inferred from ty
 
 ## Contract and boundary
 
-[Specification / evidence](../../docs/proposals/composition.md). References are not manifests, runtime support, or activation commands.
+[Specification / evidence](../../docs/proposals/composition.zh.md). References are not manifests, runtime support, or activation commands.
 
 Schema files (where provided) use JSON Schema 2020-12 and cover structure only. Use semantic validators for full domain rules. Inputs must be bounded finite JSON; active JavaScript objects and untrusted definition code are outside the API threat model.
 

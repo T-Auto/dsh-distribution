@@ -77,4 +77,4 @@ node packages/conformance/lib/cli.js "你的说明文件的绝对路径"
 
 说明文件不保存密码或密钥；“可迁移”不等于“可以公开”。实际文件操作需要权限、完整性和恢复保障，不能因为说明合法就直接开始复制或删除。
 
-工具开发细节见[开发指南](development.md)，精确规则见[规范提案](proposals/README.md)。
+工具开发细节见[开发指南](development.md)，精确规则见[规范提案](proposals/README.zh.md)。

@@ -1,6 +1,6 @@
 # 架构与职责边界
 
-Status: Draft。本文是 informative 架构说明；规范性约束见[提案索引](proposals/README.md)。
+Status: Draft。本文是 informative 架构说明；规范性约束见[提案索引](proposals/README.zh.md)。
 
 整合包作者先看[环境接入指南](getting-started.md)，不需要先理解本文的分层。对外，dsh-distribution 是统一描述和管理一整套环境的协议；对内，各模块保留独立的职责与坐标。接入工具负责调查环境并映射适用信息，不把内部模块转成作者的“基础＋扩展”选择菜单，也不因为整体介绍而虚报尚未实现的能力。
 
@@ -33,7 +33,7 @@ Core 只包含：发行物身份；描述符；协议坐标与 required 声明�
                            conformance
 ```
 
-准确依赖：composition/layout/discovery/lifecycle -> core；portability -> core + layout；conformance -> 六个协议包。Conformance 是聚合工具，不是新的元协议，也不作为其他包的依赖。
+准确依赖：composition/layout/discovery/lifecycle -> core；portability -> core + layout；lodgement -> core + discovery 的坐标语义；conformance -> 七个协议包。Conformance 是聚合工具，不是新的元协议，也不作为其他包的依赖。
 
 Schema/type/checker 在同一 typed schema declaration 上生成，独立 Ajv 检查 JSON Schema 2020-12 的结构一致性；对象关系、图、迁移规则仍由语义校验器处理。规范文档高于参考代码，生成 schema 不是修改规范的捷径。
 
@@ -73,4 +73,4 @@ npm 包版本不参与 wire 判断。来源 URI 不等于内容摘要；两个�
 
 公开 schema 标识使用 GitHub URL 作为名称，并非可用的远程 schema 服务。校验离线完成，不自动解引用 `$id` 或 component URI。声明 exclusive 只是声明管理归属，不是 OS 安全隔离证明。
 
-同一台主机上并存多个环境时，**运行时**之间同样需要边界：单例仲裁必须区分到环境实例、子进程必须绑定 owner 生命周期、停止进程必须依据独占可证明的资源。这些是行为义务而非可声明的格式，见 [DIST-008 Host Coexistence](proposals/coexistence.md)。
+同一台主机上并存多个环境时，**运行时**之间同样需要边界：单例仲裁必须区分到环境实例、子进程必须绑定 owner 生命周期、停止进程必须依据独占可证明的资源。这些是行为义务而非可声明的格式，见 [同主机多环境并存提案](proposals/coexistence.zh.md)。

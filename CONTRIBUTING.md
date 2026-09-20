@@ -1,6 +1,6 @@
 # Contributing
 
-本仓库维护公共环境元协议，不承载 TUI 市场政策或运行时实现。请先读 [AGENTS.md](AGENTS.md)、[架构](docs/architecture.md) 与[提案索引](docs/proposals/README.md)。
+本仓库维护公共环境元协议，不承载 TUI 市场政策或运行时实现。请先读 [AGENTS.md](AGENTS.md)、[架构](docs/architecture.md) 与[提案索引](docs/proposals/README.zh.md)。
 
 ## 变更归属
 

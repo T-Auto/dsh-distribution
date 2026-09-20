@@ -1,14 +1,24 @@
-# DIST-007 — Enumerable Lodgement（共享共识入口）
+# 可枚举共识入口
 
-Status: Draft
-Scope: 可枚举的共享共识入口与条目模型；不定义轮询、推送、性能保障或市场准入
-Coordinates: `discovery.distribution.dsh.dev/v1alpha1` + `Lodgement`（集合）与 `DiscoverableEntry`（条目）
+状态：**草案**（2026-09-20）
+
+范围：可枚举的共享共识入口与条目模型；不定义轮询、推送、性能保障或市场准入
+
+协议坐标：`discovery.distribution.dsh.dev/v1alpha1` + `Lodgement`（集合）与 `DiscoverableEntry`（条目）
+
+> 本文的规范词 MUST / MUST NOT / SHOULD / SHOULD NOT / MAY 采用 RFC 2119 / RFC 8174 含义，中文「必须/禁止/应/不应/可以」分别等价。本文记录的是**提案状态**（草案）；该协议的**发布状态**（Draft / Experimental / Candidate / Stable / Deprecated）与晋级条件另见[版本与兼容性](../compatibility.md)，两者是不同的事实。
+
+
+
+
+
+
 
 ## 为什么需要
 
-DIST-004 的 Discovery 只回答"给定一个已知 URI reference，解析出 resolution 或 not-found"。它**不提供"生态里存在哪些可发现对象"的可枚举视图**，因此第三方整合包管理器只能按已知引用逐项解析，无法主动盘点或秒级感知新对象。
+[发现与环境实例](discovery.zh.md) 的 Discovery 只回答"给定一个已知 URI reference，解析出 resolution 或 not-found"。它**不提供"生态里存在哪些可发现对象"的可枚举视图**，因此第三方整合包管理器只能按已知引用逐项解析，无法主动盘点或秒级感知新对象。
 
-本提案新增一个**可选的、可枚举的共享共识入口（Lodgement）**：把"按引用解析"（DIST-004）之外，补上一个"可枚举来源"，让任意消费者能列出"当前有哪些对象、各自的引用与完整性"。
+本提案新增一个**可选的、可枚举的共享共识入口（Lodgement）**：在"按引用解析"（见[发现与环境实例](discovery.zh.md)）之外，补上一个"可枚举来源"，让任意消费者能列出"当前有哪些对象、各自的引用与完整性"。
 
 它是**可选的来源**，不是唯一事实源，也不是强制中央注册表。
 
@@ -27,22 +37,22 @@ DIST-004 的 Discovery 只回答"给定一个已知 URI reference，解析出 re
   "descriptorRef": "<绝对 URI 形状的 descriptor 引用>",
   "revision": 0,                 // 非负安全整数，乐观并发 token
   "displayName": "<可选 >",
-  "contentDigest": "<必填 — 对 descriptor 或条目内容的完整性摘要>",
+  "contentDigest": "<必填 — <algorithm>:<lowercase hex>，见 LOD-03>",
   "publisher": "<可选 — 明确声明的发布者，不隐含认证>"
 }
 ```
 
-未知字段 MUST 被拒绝（沿用封闭对象约定）。`instanceId` MUST 为 URI，跨主机交换保持唯一；克隆/迁移导入目标 MUST 获得新 `instanceId`（沿 DIST-002 语义）。
+未知字段 MUST 被拒绝（沿用封闭对象约定）。`instanceId` MUST 为 URI，跨主机交换保持唯一；克隆/迁移导入目标 MUST 获得新 `instanceId`（沿[环境组成声明](composition.zh.md)语义）。
 
-**LOD-03**：写入者 MUST 采用原子发布（临时条目 + 唯一 commit 标记或目录 rename），确保任何消费者在任何时刻都只读到完整条目，**MUST NOT 读到半写状态**；写入者 MUST 在 `contentDigest` 中给出可复现的完整性摘要。重复 `instanceId` 的持久登记 MUST 由消费端拒绝（沿 DISC-02 的"重复持久注册必须被拒绝"）。
+**LOD-03**：写入者 MUST 采用原子发布（临时条目 + 唯一 commit 标记或目录 rename），确保任何消费者在任何时刻都只读到完整条目，**MUST NOT 读到半写状态**；写入者 MUST 在 `contentDigest` 中给出可复现的完整性摘要。摘要语法 MUST 为 `<algorithm>:<lowercase hex>`，其中 `algorithm` 取 `sha256` / `sha384` / `sha512`，十六进制长度 MUST 与算法对应（64 / 96 / 128）。语法由 JSON Schema 的 `pattern` 约束；算法与长度的对应是跨字段关系，由语义校验器约束，两者都报 `INVALID_DIGEST`。摘要 MUST NOT 被当作来源认证（沿 LOD-06）。重复 `instanceId` 的持久登记 MUST 由消费端拒绝（沿[发现与环境实例](discovery.zh.md)的 DISC-02 的"重复持久注册必须被拒绝"）。
 
 **LOD-04（消费端自理发现与性能）**：本协议 **MUST NOT** 规定消费者的发现时机、轮询 cadence、事件/推送、订阅、缓存一致性或性能保障。每个消费端自行决定"何时、以何种频率、以何种方式"盘点一个或多个 Lodgement，并**自行承担**相应的时间、IO、CPU 与安全成本。协议提供的是"可枚举内容"，不是"发现行为或吞吐承诺"。
 
-**LOD-05**：不强制唯一中央网关。MUST NOT 要求"所有对象都来自同一个 Lodgement"；MUST NOT 把 Lodgement 当作唯一权威。不同 Lodgement 可并存，消费者自行选择一个或多个来源，优先级由实现决定（沿 DISC-01 的 provider 优先模型）。
+**LOD-05**：不强制唯一中央网关。MUST NOT 要求"所有对象都来自同一个 Lodgement"；MUST NOT 把 Lodgement 当作唯一权威。不同 Lodgement 可并存，消费者自行选择一个或多个来源，优先级由实现决定（沿[发现与环境实例](discovery.zh.md)的 DISC-01 的 provider 优先模型）。
 
-**LOD-06**：安全基线。消费者 MUST 在执行任何 IO（读取/解析/下载 descriptor）前完成来源校验、授权与输入大小限制；`contentDigest` 只用于**完整性**，MUST NOT 视为来源认证；全局唯一性、生态级准入、签名颁发与来源可信度需由各实现/生态 profile 提供证据（沿 DISC-06，本协议不宣称）。
+**LOD-06**：安全基线。消费者 MUST 在执行任何 IO（读取/解析/下载 descriptor）前完成来源校验、授权与输入大小限制；`contentDigest` 只用于**完整性**，MUST NOT 视为来源认证；全局唯一性、生态级准入、签名颁发与来源可信度需由各实现/生态 profile 提供证据（沿[发现与环境实例](discovery.zh.md)的 DISC-06，本协议不宣称）。
 
-**LOD-07（与 DIST-004 的关系）**：Lodgement 是 Discovery Provider 的**可枚举输入/候选全集**，不是 resolution 的替代。消费者一般流程为：从一个或多个 Lodgement 列出候选 `descriptorRef` → 按 DIST-004 对每个 reference 做 resolution 校验。Lodgement 列出的条目 MUST NOT 被当作已验证的 descriptor 或已认证的来源。
+**LOD-07（与发现的关系）**：Lodgement 是 Discovery Provider 的**可枚举输入/候选全集**，不是 resolution 的替代。消费者一般流程为：从一个或多个 Lodgement 列出候选 `descriptorRef` → 按[发现与环境实例](discovery.zh.md)对每个 reference 做 resolution 校验。Lodgement 列出的条目 MUST NOT 被当作已验证的 descriptor 或已认证的来源。
 
 **LOD-08（生命周期与软删除）**：`DiscoverableEntry` MUST 携带 `status`，取值至少 `published` 与 `removed`。
 - 移除 MUST 先**原子**地把条目 `status` 置为 `removed`（条目保留但不可发现），与发布共用同一原子机制（临时条目 + 唯一 commit 标记/rename）。
@@ -58,16 +68,16 @@ DIST-004 的 Discovery 只回答"给定一个已知 URI reference，解析出 re
 ## Status, Scope and boundaries
 
 - Status: Draft；拟议公共契约，未被生态治理接纳为 Stable。
-- Scope：只定义可枚举共识入口契约、条目模型、原子与完整性要求、以及与 DIST-004 的使用关系。
+- Scope：只定义可枚举共识入口契约、条目模型、原子与完整性要求、以及与[发现与环境实例](discovery.zh.md)的使用关系。
 - 明确不在范围：轮询/推送/订阅/缓存一致/性能（见 LOD-04）、市场或准入策略、签名基础设施、来源认证、全局唯一 registry 的实现证据。
 
 ## Normative change
 
-新增协议坐标与 kind（`Lodgement` / `DiscoverableEntry`）+ 封闭 schema + 语义校验器。不修改 DIST-001..006 的现有语义或坐标。
+新增协议坐标与 kind（`Lodgement` / `DiscoverableEntry`）+ 封闭 schema + 语义校验器。不修改既有的环境身份、组成、受管存储归属、发现、生命周期与可迁移性六项协议的语义或坐标。
 
 ## Compatibility impact
 
-新增可选协议，向后兼容：现有消费者按 DIST-004 解析不受影响；未使用 Lodgement 的实现无需改动。不发生 breaking wire 语义（若未来需要，按仓库规定另起坐标）。
+新增可选协议，向后兼容：现有消费者按[发现与环境实例](discovery.zh.md)解析不受影响；未使用 Lodgement 的实现无需改动。不发生 breaking wire 语义（若未来需要，按仓库规定另起坐标）。
 
 ## Evidence / Fixtures
 

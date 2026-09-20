@@ -10,7 +10,7 @@ Main entry: `@dsh-distribution/discovery`. Exported types are inferred from type
 
 ## Contract and boundary
 
-[Specification / evidence](../../docs/proposals/discovery.md). Caller selects and trusts provider; wrapper cancellation cannot terminate noncooperative IO.
+[Specification / evidence](../../docs/proposals/discovery.zh.md). Caller selects and trusts provider; wrapper cancellation cannot terminate noncooperative IO.
 
 Schema files (where provided) use JSON Schema 2020-12 and cover structure only. Use semantic validators for full domain rules. Inputs must be bounded finite JSON; active JavaScript objects and untrusted definition code are outside the API threat model.
 

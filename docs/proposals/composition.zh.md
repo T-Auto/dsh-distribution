@@ -1,8 +1,18 @@
-# DIST-002 — Environment Composition
+# 环境组成声明
 
-Status: Draft
-Scope: logical component references, not component manifests
-Coordinates: `composition.distribution.dsh.dev/v1alpha1` + `EnvironmentComposition`
+状态：**草案**（2026-09-20）
+
+范围：logical component references, not component manifests
+
+协议坐标：`composition.distribution.dsh.dev/v1alpha1` + `EnvironmentComposition`
+
+> 本文的规范词 MUST / MUST NOT / SHOULD / SHOULD NOT / MAY 采用 RFC 2119 / RFC 8174 含义，中文「必须/禁止/应/不应/可以」分别等价。本文记录的是**提案状态**（草案）；该协议的**发布状态**（Draft / Experimental / Candidate / Stable / Deprecated）与晋级条件另见[版本与兼容性](../compatibility.md)，两者是不同的事实。
+
+
+
+
+
+
 
 ## 数据模型
 
@@ -10,7 +20,7 @@ Spec 是 `{ components: [...] }`。每个 component 有 `id`、`ref`，可选 `c
 
 **COMP-01**：`id` MUST 在该组合内唯一，采用 schema 的非空 ASCII identifier 语法；它不是安装实例 ID。`ref` MUST 是绝对 URI 形状的 opaque 引用，可使用 registry、pkg、OCI、HTTP 或自有方案；解析权属于对应 provider。相同 ref MAY 被不同逻辑组件引用。
 
-**COMP-02**：`contracts` MAY 引用其他协议的 `apiVersion + kind`，坐标 MUST 遵守 DIST-001 的语法且不重复。引用 MUST NOT 被解释成 live participant support、activation、binding 或 agreement。
+**COMP-02**：`contracts` MAY 引用其他协议的 `apiVersion + kind`，坐标 MUST 遵守 DSH 环境身份与声明 的语法且不重复。引用 MUST NOT 被解释成 live participant support、activation、binding 或 agreement。
 
 **COMP-03**：`dependsOn` 表示逻辑组成依赖，不是启动顺序。每条依赖 MUST 指向同一组合内的另一组件，不得重复、自依赖或成环。该图 MUST 是 DAG。是否安装、何时激活、如何解析版本交给组件协议或 Manager。
 
