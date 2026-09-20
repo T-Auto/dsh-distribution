@@ -1,4 +1,4 @@
-import { s, uriSchema, distributionIdentitySchema, validate, issue, type Infer, type Result, type ProtocolDefinition, type Issue } from '@dsh-distribution/core';
+import { s, uriSchema, distributionIdentitySchema, digestSchema, digestIssue, validate, issue, type Infer, type Result, type ProtocolDefinition, type Issue } from '@dsh-distribution/core';
 
 export const coordinate = { apiVersion: 'discovery.distribution.dsh.dev/v1alpha1', kind: 'Lodgement' } as const;
 const entryCoordinate = { apiVersion: coordinate.apiVersion, kind: 'DiscoverableEntry' } as const;
@@ -11,7 +11,7 @@ export const entrySchema = s.object({
   descriptorRef: uriSchema,
   revision: s.integer,
   displayName: s.optional(s.string()),
-  contentDigest: s.string(),
+  contentDigest: digestSchema,
   publisher: s.optional(s.string()),
   status: s.enum('published', 'removed'),
 });
@@ -42,7 +42,10 @@ function validateLodgementSemantics(value: Lodgement, issues: Issue[]): void {
 }
 
 function validateEntrySemantics(value: DiscoverableEntry, issues: Issue[]): void {
-  if (value.contentDigest.length === 0) issue(issues, 'MISSING_CONTENT_DIGEST', '/contentDigest', 'contentDigest is required');
+  // LOD-03: the digest must be a reproducible integrity summary, not merely a nonempty string.
+  // Syntax is guaranteed by `digestSchema`; the algorithm→hex-length correspondence is cross-field
+  // and therefore lives here. Both layers are required — see conformance matrix LOD-03.
+  digestIssue(value.contentDigest, '/contentDigest', issues);
 }
 
 export function visibleEntries(lodgement: Lodgement, contentDigestMatches: (entry: DiscoverableEntry) => boolean = () => true): readonly DiscoverableEntry[] {

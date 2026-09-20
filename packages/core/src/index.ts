@@ -9,6 +9,23 @@ export const coordinateSchema = s.object({ apiVersion: apiVersionSchema, kind: s
 export type Coordinate = Infer<typeof coordinateSchema>;
 export const distributionIdentitySchema = s.object({ id: uriSchema, version: s.string('^\\S+$') });
 export type DistributionIdentity = Infer<typeof distributionIdentitySchema>;
+/**
+ * Integrity digest syntax shared by contracts that must carry a reproducible digest
+ * (`<algorithm>:<lowercase hex>`). The pattern constrains syntax; the algorithm→hex-length
+ * correspondence is cross-field and is checked by `digestIssue` in the owning validator, so both
+ * layers are required for conformance. See packages/lodgement (LOD-03).
+ */
+export const DIGEST_ALGORITHM_HEX_LENGTH = Object.freeze({ sha256: 64, sha384: 96, sha512: 128 });
+export const digestSchema = s.string('^(?:sha256|sha384|sha512):[0-9a-f]+$');
+export const digestIssue = (value: string, path: string, issues: Issue[]): void => {
+  const separator = value.indexOf(':');
+  if (separator <= 0) { issue(issues, 'INVALID_DIGEST', path, 'Digest must be "<algorithm>:<lowercase hex>"'); return; }
+  const algorithm = value.slice(0, separator);
+  const hex = value.slice(separator + 1);
+  const expected = DIGEST_ALGORITHM_HEX_LENGTH[algorithm as keyof typeof DIGEST_ALGORITHM_HEX_LENGTH];
+  if (expected === undefined) { issue(issues, 'INVALID_DIGEST', path, `Unsupported digest algorithm ${algorithm}`); return; }
+  if (hex.length !== expected) issue(issues, 'INVALID_DIGEST', path, `${algorithm} digest must carry ${expected} hex characters`);
+};
 export const protocolDeclarationSchema = s.object({ apiVersion: apiVersionSchema, kind: s.string('^[A-Z][A-Za-z0-9]*$'), required: s.boolean, spec: s.json });
 export type ProtocolDeclaration = Infer<typeof protocolDeclarationSchema>;
 export const descriptorSchema = s.object({

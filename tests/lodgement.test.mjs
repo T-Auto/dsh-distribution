@@ -12,7 +12,7 @@ import Ajv2020 from 'ajv/dist/2020.js';
 const entry = {
   apiVersion: coordinate.apiVersion, kind: 'DiscoverableEntry', instanceId: 'urn:test:instance:one',
   distribution: { id: 'urn:test:dist:one', version: '1' }, descriptorRef: 'urn:test:descriptor:one',
-  revision: 0, contentDigest: 'sha256:one', publisher: 'urn:test:publisher:one', status: 'published',
+  revision: 0, contentDigest: 'sha256:0000000000000000000000000000000000000000000000000000000000000001', publisher: 'urn:test:publisher:one', status: 'published',
 };
 const removed = { ...entry, instanceId: 'urn:test:instance:removed', status: 'removed' };
 const lodgement = { ...coordinate, entries: [entry, removed] };
@@ -27,6 +27,14 @@ test('LOD structure uses closed fields, URI instanceId, nonnegative revision and
   const check = ajv.compile(schemaDocument('lodgement/entry', entrySchema));
   assert.equal(check(entry), true);
   assert.equal(check(change(entry, value => { value.unknown = true; })), false);
+});
+
+test('LOD-03 contentDigest is a reproducible digest, not merely a nonempty string', () => {
+  assert.equal(validateEntry(change(entry, value => { value.contentDigest = 'abc'; })).ok, false);
+  assert.equal(validateEntry(change(entry, value => { value.contentDigest = 'sha256:ABCDEF'; })).ok, false);
+  assert.equal(validateEntry(change(entry, value => { value.contentDigest = `sha256:${'a'.repeat(63)}`; })).ok, false);
+  assert.equal(validateEntry(change(entry, value => { value.contentDigest = `sha256:${'a'.repeat(64)}`; })).ok, true);
+  assert.equal(validateEntry(change(entry, value => { value.contentDigest = `sha512:${'a'.repeat(128)}`; })).ok, true);
 });
 
 test('LOD duplicate instanceId is rejected semantically', () => {
@@ -69,8 +77,9 @@ test('LOD removal requires publisher or authorization and preserves shared carri
 
 test('LOD fixtures load as JSON and identify implementation evidence as not-tested', async () => {
   const fixtures = JSON.parse(await readFile('conformance/fixtures/lodgement.json', 'utf8'));
-  assert.equal(fixtures.length, 3);
+  assert.equal(fixtures.length, 4);
   assert.ok(fixtures.some(fixture => fixture.id === 'half-written' && fixture.valid === false));
+  assert.ok(fixtures.some(fixture => fixture.id === 'digest-wrong-length' && fixture.code === 'INVALID_DIGEST'));
   assert.equal(implementationEvidence.filesystemTransactions, 'not-tested');
   assert.equal(implementationEvidence.persistentGlobalUniqueness, 'not-tested');
   assert.equal(implementationEvidence.sourceAuthentication, 'not-tested');

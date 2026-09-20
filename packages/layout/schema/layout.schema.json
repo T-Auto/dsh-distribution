@@ -20,25 +20,50 @@
             "pattern": "^(?:config|extensions|state|data|cache|logs|secrets|[a-z][a-z0-9.-]*:[A-Za-z0-9._-]+)$(?![\\s\\S])"
           },
           "location": {
-            "type": "object",
-            "properties": {
-              "type": {
-                "type": "string",
-                "enum": [
-                  "relative-path",
-                  "uri"
-                ]
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "relative-path"
+                    ]
+                  },
+                  "value": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "^\\./[A-Za-z0-9_-][A-Za-z0-9._-]*(?:/[A-Za-z0-9_-][A-Za-z0-9._-]*)*$(?![\\s\\S])"
+                  }
+                },
+                "required": [
+                  "type",
+                  "value"
+                ],
+                "additionalProperties": false
               },
-              "value": {
-                "type": "string",
-                "minLength": 1
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "uri"
+                    ]
+                  },
+                  "value": {
+                    "type": "string",
+                    "minLength": 1,
+                    "pattern": "^[A-Za-z][A-Za-z0-9+.-]*:[^\\s\\u0000-\\u001f\\u007f]+$(?![\\s\\S])"
+                  }
+                },
+                "required": [
+                  "type",
+                  "value"
+                ],
+                "additionalProperties": false
               }
-            },
-            "required": [
-              "type",
-              "value"
-            ],
-            "additionalProperties": false
+            ]
           },
           "ownership": {
             "type": "string",

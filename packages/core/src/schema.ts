@@ -46,6 +46,23 @@ export const s = {
     return { json: { type: 'string', enum: values }, check(v, p, e) { if (typeof v !== 'string' || !values.includes(v)) issue(e, 'SCHEMA_INVALID', p, `Expected one of ${values.join(', ')}`); } };
   },
   optional<T>(schema: Schema<T>): Schema<T> & { optional: true } { return { ...schema, optional: true }; },
+  /**
+   * Alternatives that all describe the same value space. Each variant is tried on a scratch issue
+   * list so that a failing variant does not leak its own issues; the produced JSON Schema is a real
+   * `oneOf`, so a schema-only implementation rejects exactly what this checker rejects. Use it for
+   * discriminated unions (`location.type` + `location.value`), not for "any of N shapes".
+   */
+  oneOf<T extends readonly Schema[]>(...variants: T): Schema<Infer<T[number]>> {
+    if (variants.length === 0) throw new TypeError('oneOf requires at least one variant');
+    return { json: { oneOf: variants.map(variant => variant.json) }, check(v, p, e) {
+      for (const variant of variants) {
+        const scratch: Issue[] = [];
+        variant.check(v, p, scratch);
+        if (scratch.length === 0) return;
+      }
+      issue(e, 'SCHEMA_INVALID', p, 'Expected a value matching one of the declared variants');
+    } };
+  },
   array<T>(schema: Schema<T>): Schema<T[]> {
     return { json: { type: 'array', items: schema.json }, check(v, p, e) {
       if (!Array.isArray(v)) { issue(e, 'SCHEMA_INVALID', p, 'Expected array'); return; }
