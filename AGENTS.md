@@ -2,7 +2,7 @@
 
 ## Scope and authority
 
-`dsh-distribution` defines implementation-independent environment identity and portability protocols. It is not an installer, runtime, package format, marketplace policy, or designated Manager. `dsh-std` owns component interaction contracts; `dsh-ecosystem-spec` owns ecosystem guidance and product admission profiles. Neither is a mandatory runtime dependency.
+`dsh-distribution` defines implementation-independent environment identity and portability protocols. It is not an installer, runtime, package format, marketplace policy, or designated Manager. `dsh-std` owns component interaction contracts; `dsh-ecosystem-spec` is the ecosystem entry point that mounts upstream protocol repositories and indexes them — it does not host product admission text, which stays with each product's owner (for example `ccch1mneyyy/dsh-TUI` carries its own TUI Profile in-repo). Neither is a mandatory runtime dependency.
 
 Core contains only identity, declarations, catalog dispatch, and compatibility reports. Domain semantics belong in independently versioned packages. Private definitions use the same `apiVersion` + `kind` mechanism as public definitions. Never interpret a declaration as permission or a safety guarantee.
 
