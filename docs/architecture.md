@@ -23,7 +23,7 @@
 ## 1. 正交而非强制堆叠
 
 ```text
-                 ecosystem guidance / admission profiles
+                 ecosystem guidance / product-owned profiles
                             /
          dsh-std interaction            dsh-distribution environment
          core -> domain protocols       core -> environment protocols
@@ -79,9 +79,11 @@ npm 包版本不参与 wire 判断。来源 URI 不等于内容摘要；两个�
 
 ## 5. dsh-ecosystem-spec 分工
 
-本地审阅基线：`T-Auto/dsh-ecosystem-spec@c7b1b61e0692ec36dc66221058757249d858df85`。当前 README 声明修订中，并将 `old/` 作为既有规范备份；当前介绍将 dsh-distribution 定位为发行物/整合包作者的环境元协议。
+分工基线：`T-Auto/dsh-ecosystem-spec@2f9c068812d7b98daea1d4ac8ed5d611fd619ceb`（2026-10-02）。该仓库已是**生态入口**：只负责把上游协议与范例仓库挂载到 `vendor/` 并固定 revision、登记索引与治理规则，**不承载任何产品准入正文**。产品准入 Profile 由归属方在自己的仓库里维护——例如 dsh-TUI 的 TUI Profile 就随 `ccch1mneyyy/dsh-TUI` 的代码在 `tui-profile/` 内修订。该仓库当前把 dsh-distribution 介绍为面向发行物/整合包作者的环境元协议。
 
-本项目据此提供公共环境契约，而不把旧 TUI admission 要求搬进 core。准入版本、认证标志、推荐列表、治理晋级由生态项目决定。任何 TUI 专有政策应标 `TUI-*`；不得因本仓库本地测试通过就声称「市场已接纳」。本次不修改生态仓库入口或其 vendor revision。
+本项目据此提供公共环境契约，而不把任何产品的准入要求搬进 core。准入版本、认证标志、推荐列表、治理晋级由对应的生态归属方决定，`dsh-ecosystem-spec` 只照录这些事实。任何 TUI 专有政策应标 `TUI-*`；不得因本仓库本地测试通过就声称「市场已接纳」。
+
+上面引用的生态侧 revision 只是撰写时的审阅基线：本仓库不依赖它，也不随它自动升级。
 
 ## 6. 信任模型
 

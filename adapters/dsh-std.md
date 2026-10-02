@@ -15,4 +15,4 @@ Manager 可以通过 adapter 把若干安装单元归入一个 EnvironmentInstan
 5. 把运行时事实映射为环境 observation；不把静态 contracts 当作 support。
 6. 迁移时使用应用提供的一致性 export/checkpoint 能力，不直接复制正在写入的 session 数据库。
 
-本次没有实现 dsh 上游私有 API 绑定：其版本和运行形态由产品 adapter 选择，不能在通用协议包 import 某产品运行时。生态准入/市场展示在 dsh-ecosystem-spec 中决定，不能因 adapter 示例存在就认为已接入。
+本次没有实现 dsh 上游私有 API 绑定：其版本和运行形态由产品 adapter 选择，不能在通用协议包 import 某产品运行时。生态准入与市场展示由各生态的归属方自行决定（`dsh-ecosystem-spec` 只挂载与索引上游协议，产品准入正文留在归属方自己的 Profile 里），不能因 adapter 示例存在就认为已接入。

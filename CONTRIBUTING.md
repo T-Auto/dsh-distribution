@@ -6,7 +6,7 @@
 
 - 通用环境语义：`docs/proposals/` + 对应 `packages/`。
 - 组件 API/manifest/协商：dsh-std，不在此复制。
-- 生态治理、入门入口、产品准入：dsh-ecosystem-spec；TUI 专有要求标 TUI-*。
+- 生态入口与索引：dsh-ecosystem-spec（挂载上游协议/范例仓库、登记索引与治理规则，不承载产品准入正文）；产品准入 Profile 由归属方自维护（例如 dsh-TUI 仓内 `tui-profile/`），TUI 专有要求标 TUI-*。
 - 单产品绑定细节：`adapters/` informative note，不提升为公共约束。
 - 协议索引：`registry/`，不夹带推荐列表或可执行安装来源。
 
