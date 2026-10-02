@@ -67,7 +67,7 @@
 
 ## 和其他 DSH 项目有什么关系？
 
-- [dsh-std](https://github.com/Yan-Zero/dsh-std)：让**插件、界面和运行时互相配合**。
+- [dsh-std](https://github.com/T-Auto/dsh-std)：让**插件、界面和运行时互相配合**。
 - **dsh-distribution**：让**一整套 DSH 环境能被外部工具识别和管理**。
 - [dsh-ecosystem-spec](https://github.com/T-Auto/dsh-ecosystem-spec)：**生态总入口**（挂载上游协议与范例仓库、登记索引与治理规则；产品准入 Profile 由各归属方在自己的仓库里维护）。
 

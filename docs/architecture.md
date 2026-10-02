@@ -65,7 +65,7 @@ npm 包版本不参与 wire 判断。来源 URI 不等于内容摘要；两个�
 
 ## 4. dsh-std 引用映射（只读基线）
 
-本地审阅基线：`Yan-Zero/dsh-std@3ef11dac51e82625a345b51051b2bab90649d804`。
+本地审阅基线：`T-Auto/dsh-std@3ef11dac51e82625a345b51051b2bab90649d804`。
 
 | distribution 概念 | dsh-std 对应概念 | 边界 |
 | --- | --- | --- |
